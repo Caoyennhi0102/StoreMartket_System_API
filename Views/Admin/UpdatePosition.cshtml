@@ -1,0 +1,166 @@
+﻿@model StoreMartket_System_API.Models.ChucVu
+@{
+    ViewBag.Title = "UpdatePosition";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>CẬP NHẬT CHỨC VỤ</h2>
+<link rel="stylesheet" href="~/Content/UpdatePosition.css">
+<div class="container">
+    <!-- Form tìm chức vụ -->
+    <form id="searchPositionForm">
+        <div class="form-group">
+            <label for="MaChucVu">Mã Chức Vụ:</label>
+            <input type="text" class="form-control" id="MaChucVu" name="MaChucVu" placeholder="Nhập mã chức vụ để tìm" required>
+        </div>
+        <button type="button" class="btn btn-secondary" id="searchButton">Tìm Chức Vụ</button>
+    </form>
+
+    <hr />
+
+    <!-- Form cập nhật chức vụ -->
+    <form id="updatePositionForm" method="post">
+        <div class="form-group">
+            <label for="TenChucVu">Tên Chức Vụ:</label>
+            <input type="text" class="form-control" id="TenChucVu" name="TenChucVu" placeholder="Nhập tên chức vụ" required>
+        </div>
+
+        <div class="form-group">
+            <label for="MaBP">Chọn Bộ Phận:</label>
+            <select class="form-control" id="MaBP" name="MaBP" required>
+                <option value="">-- Chọn bộ phận --</option>
+                @foreach (var item in ViewBag.DSBoPhan as SelectList)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cập Nhật Chức Vụ</button>
+    </form>
+
+    <hr />
+
+    <!-- Thông báo kết quả tìm kiếm và cập nhật -->
+    <div id="resultMessage"></div>
+
+    <!-- Bảng danh sách chức vụ -->
+    <h3>DANH SÁCH CHỨC VỤ</h3>
+    <table class="table table-bordered" id="chucVuTable">
+        <thead>
+            <tr>
+                <th>Mã Chức Vụ</th>
+                <th>Tên Chức Vụ</th>
+                <th>Bộ Phận</th>
+                <th>Tên Bộ Phận</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.DSCV)
+            {
+                <tr id="row-@item.MaChucVu">
+                    <td>@item.MaChucVu</td>
+                    <td>@item.TenChucVu</td>
+                    <td>@item.BoPhan?.TenBoPhan</td>
+                    <td>
+                        <button type="button" class="btn btn-info" onclick="editPosition('@item.MaChucVu')">Sửa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- jQuery và AJAX Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#searchButton').click(function () {
+        var maChucVu = $('#MaChucVu').val().trim();
+
+        if (!maChucVu) {
+            alert('Vui lòng nhập mã chức vụ.');
+            return;
+        }
+
+        $.ajax({
+            url:  '@Url.Action("SearchPosition", "Admin")',
+            type: 'POST',
+            data: { maCV: maChucVu }, // Đảm bảo sử dụng đúng ID
+            success: function (response) {
+                if (response.success) {
+                    alert('Tìm thấy chức vụ: ' + response.TenCV);
+                    $('#TenChucVu').val(response.TenCV);
+                    $('#MaBP').val(response.MaBP);
+                } else {
+                    alert(response.message || "Không tìm thấy mã chức vụ."); // Dự phòng
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', xhr.responseText || error);
+                alert('Có lỗi xảy ra khi tìm chức vụ.');
+            }
+        });
+    });
+
+    // Cập nhật chức vụ khi người dùng nhấn "Cập Nhật Chức Vụ"
+    $('#updatePositionForm').submit(function (event) {
+        event.preventDefault(); // Ngừng submit form mặc định
+
+        var chucVu = {
+            MaChucVu: $('#MaChucVu').val(),
+            TenChucVu: $('#TenChucVu').val(),
+            MaBP: $('#MaBP').val()
+        };
+
+        $.ajax({
+            url:  '@Url.Action("UpdatePosition", "Admin")',
+            type: 'POST',
+            data: chucVu,
+            success: function (response) {
+                if (response.success) {
+                    $('#resultMessage').html('<div class="alert alert-success">' + response.message + '</div>');
+
+                    // Cập nhật lại bảng danh sách chức vụ
+                    var row = $('#row-' + chucVu.MaChucVu);
+                    row.find('td:eq(1)').text(chucVu.TenChucVu);
+                    row.find('td:eq(2)').text($('#MaBP option:selected').text());
+
+                } else {
+                    $('#resultMessage').html('<div class="alert alert-danger">' + response.message + '</div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                alert("Có lỗi xảy ra khi cập nhật chức vụ.");
+            }
+        });
+    });
+
+    // Hàm chỉnh sửa chức vụ (chuyển dữ liệu vào form)
+    function editPosition(maChucVu) {
+        $.ajax({
+           url: '@Url.Action("SearchPosition", "Admin")',
+            type: 'GET',
+            data: { maCV: maChucVu },
+            success: function (response) {
+                if (response.success) {
+                    // Điền dữ liệu vào form chỉnh sửa
+                    $('#MaChucVu').val(response.MaChucVu);
+                    $('#TenChucVu').val(response.TenCV);
+                    $('#MaBP').val(response.MaBP);
+                    $('#resultMessage').html('<div class="alert alert-info">Đang chỉnh sửa chức vụ: ' + response.TenCV + '</div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                alert("Có lỗi xảy ra khi tìm chức vụ.");
+            }
+        });
+    }
+</script>

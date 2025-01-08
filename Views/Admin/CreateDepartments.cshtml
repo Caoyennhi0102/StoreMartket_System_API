@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "Thêm Bộ Phận";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đảm bảo đường dẫn đúng
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Thêm Bộ Phận</h2>
+
+<div id="responseMessage"></div>
+<link rel="stylesheet" href="~/Content/CreateDepartments.css" />
+<form id="createDepartmentForm">
+    <div class="form-group">
+        <label for="TenBP">Tên Bộ Phận:</label>
+        <input type="text" class="form-control" id="TenBP" name="TenBP" placeholder="Nhập tên bộ phận" required />
+    </div>
+
+    <div class="form-group">
+        <label for="MaCuaHang">Cửa Hàng:</label>
+        <select class="form-control" id="MaCuaHang" name="MaCuaHang" required>
+            <option value="">-- Chọn cửa hàng --</option>
+            @foreach (var item in ViewBag.Store)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Thêm Bộ Phận</button>
+</form>
+<h3>Danh Sách Bộ Phận</h3>
+<table class="table table-bordered" id="departmentsTable">
+    <thead>
+        <tr>
+            <th>Mã Bộ Phận</th>
+            <th>Tên Bộ Phận</th>
+            <th>Cửa Hàng</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Dữ liệu sẽ được load bằng JavaScript -->
+    </tbody>
+</table>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#createDepartmentForm").submit(function (e) {
+            e.preventDefault();
+
+            var tenBP = $("#TenBP").val();
+            var maCH = $("#MaCuaHang").val();
+
+            if (!tenBP || !maCH) {
+                $("#responseMessage").html('<div class="alert alert-danger">Tên bộ phận và cửa hàng không được để trống.</div>');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("CreateDepartments", "Admin")',
+                type: 'POST',
+                data: { TenBP: tenBP, maCH: maCH },
+                success: function (response) {
+                    if (response.success) {
+                        $("#responseMessage").html('<div class="alert alert-success">' + response.message + '</div>');
+                        $("#createDepartmentForm")[0].reset(); // Reset form sau khi thành công
+                    } else {
+                        $("#responseMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function () {
+                    $("#responseMessage").html('<div class="alert alert-danger">Có lỗi xảy ra trong quá trình xử lý.</div>');
+                }
+            });
+        });
+    });
+     // Hàm load danh sách bộ phận
+        function loadDepartments() {
+            $.ajax({
+                url: '@Url.Action("GetDepartments", "Admin")',
+                type: 'GET',
+                success: function (response) {
+                    var rows = '';
+                    response.forEach(function (item) {
+                        rows += `<tr>
+                            <td>${item.MaBoPhan}</td>
+                            <td>${item.TenBoPhan}</td>
+                            <td>${item.TenCuaHang}</td>
+                        </tr>`;
+                    });
+                    $("#departmentsTable tbody").html(rows);
+                },
+                error: function () {
+                    $("#responseMessage").html('<div class="alert alert-danger">Không thể tải danh sách bộ phận.</div>');
+                }
+            });
+        }
+
+</script>

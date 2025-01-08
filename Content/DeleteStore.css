@@ -1,0 +1,109 @@
+﻿/* Định dạng cho tiêu đề */
+h2 {
+    text-align: center;
+    color: red;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Định dạng form */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+/* Input và nút tìm kiếm */
+input#maCuaHang {
+    width: calc(100% - 110px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button#btnSearch {
+    padding: 10px 15px;
+    border: none;
+    background-color: #0094ff;
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button#btnSearch:hover {
+        background-color: #45a049;
+    }
+
+/* Bảng kết quả tìm kiếm */
+#resultContainer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    table th, table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    table th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+        background-color: #ddd;
+    }
+
+/* Nút xóa */
+button#btnDelete {
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+    button#btnDelete:enabled {
+        cursor: pointer;
+        background-color: #e53935;
+    }
+
+    button#btnDelete:hover:enabled {
+        background-color: #d32f2f;
+    }
+
+/* Thông báo lỗi */
+#searchResult p.text-danger {
+    color: red;
+    font-weight: bold;
+}
+
+/* Căn chỉnh margin giữa các thành phần */
+.mt-3 {
+    margin-top: 20px;
+}

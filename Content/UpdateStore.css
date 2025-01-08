@@ -1,0 +1,122 @@
+﻿/* CSS cho toàn bộ trang */
+.container {
+    margin-top: 20px;
+}
+
+/* CSS cho tiêu đề */
+h2 {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+h3 {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+/* CSS cho form tìm kiếm */
+#searchForm {
+    margin-bottom: 20px;
+}
+
+/* CSS cho form cập nhật thông tin cửa hàng */
+#updateForm {
+    margin-top: 20px;
+}
+
+/* CSS cho thông báo tìm kiếm */
+#searchResult {
+    margin-top: 20px;
+}
+
+/* CSS cho bảng */
+#storeList {
+    margin-top: 30px;
+}
+
+/* Thêm viền cho bảng và các cột */
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Giúp viền cột không bị chồng chéo */
+}
+
+    .table th, .table td {
+        border: 1px solid #ddd; /* Viền xung quanh các ô */
+        padding: 10px;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: deepskyblue;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .table td {
+        background-color: #fff;
+    }
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+/* Style cho nút sửa trong bảng */
+.btn-warning {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+    .btn-warning:hover {
+        background-color: #e67e22;
+    }
+
+/* Style cho các nút chính */
+.btn {
+    border-radius: 3px;
+    padding: 8px 20px;
+}
+
+/* CSS cho input trong form */
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control {
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+/* CSS cho thông báo lỗi hoặc thành công */
+.text-danger {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.text-success {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Responsive design cho các thiết bị nhỏ */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .form-control {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}

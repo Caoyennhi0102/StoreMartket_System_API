@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewData["Title"] = "Đăng Nhập Vào Hệ Thống";
+}
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="~/Content/login.css">
+</head>
+
+<body>
+    <h1>ĐỒ ÁN QUẢN LÝ CỬA HÀNG TIỆN LỢI</h1>
+    <div class="login-container">
+        <h2>Đăng Nhập</h2>
+        <form method="post" action="@Url.Action("Login", "Login")" id="loginForm">
+            <div class="form-group">
+                <label for="username">Tài khoản</label>
+                <input type="text" id="username" name="username" placeholder="Nhập tài khoản" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+            </div>
+            <button type="submit" class="btn-submit">Đăng Nhập</button>
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(loginForm);
+            const response = await fetch(loginForm.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                errorMessage.textContent = result.message;
+            } else {
+                window.location.href = result.redirectUrl || '/';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d0d8ca421019431aaa4f508ce2d9e23e" Name="Diagram1">
+        <EntityTypeShape EntityType="QLCHTLModel.BacLuong" Width="1.5" PointX="9.75" PointY="18.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.BoPhan" Width="1.5" PointX="3" PointY="23" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.ChiTietHoaDon" Width="1.5" PointX="18" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.ChiTietPhieuNhap" Width="1.5" PointX="17" PointY="28" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.ChiTietPhieuTra" Width="1.5" PointX="21" PointY="18" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.ChucVu" Width="1.5" PointX="5.25" PointY="23.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.Cong" Width="1.5" PointX="9.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.CuaHang" Width="1.5" PointX="0.75" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.DanhMucSanPham" Width="1.5" PointX="1.5" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.HangHoa" Width="1.5" PointX="0.75" PointY="15.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.HDLaoDong" Width="1.5" PointX="12" PointY="21.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.HoaDon" Width="1.5" PointX="12.75" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.Kho" Width="1.5" PointX="3" PointY="20" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.KHThanThiet" Width="1.5" PointX="10.5" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.KhuyenMai" Width="1.5" PointX="3" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.KPI" Width="1.5" PointX="9.75" PointY="30.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.Luong" Width="1.5" PointX="12" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.NhaCungCap" Width="1.5" PointX="1.5" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.NhanVien" Width="1.5" PointX="7.5" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.PhieuNhapHang" Width="1.5" PointX="14.75" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.PhieuTraHang" Width="1.5" PointX="15.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.Pos" Width="1.5" PointX="9.75" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.QLCaNV" Width="1.5" PointX="15" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.Quyen" Width="1.5" PointX="15.5" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.ThongKeBanHang" Width="1.5" PointX="9.75" PointY="26.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLCHTLModel.User" Width="1.5" PointX="17.75" PointY="22.125" IsExpanded="true" />
+        <AssociationConnector Association="QLCHTLModel.FK__BacLuong__MaNhan__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HDLaoDong__Luong__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Luong__LuongCoBa__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__BoPhan__MaCuaHan__398D8EEE" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChucVu__MaBoPhan__3C69FB99" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__NhanVien__MaBoPh__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietHo__MaHan__0D7A0286" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietHo__MaHoa__0C85DE4D" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietPh__MaHan__76969D2E" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietPh__MaPhi__75A278F5" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietPh__MaHan__7E37BEF6" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ChiTietPh__MaPhi__7D439ABD" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__NhanVien__MaChuc__412EB0B6" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Cong__MaNhanVien__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Luong__MaCong__5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongCh__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaCongTh__59063A47" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Kho__MaCuaHang__1332DBDC" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__NhanVien__MaCuaH__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Pos__MaCuaHang__160F4887" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HangHoa__MaDanhM__6A30C649" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HangHoa__MaNhaCu__6B24EA82" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Kho__MaHangHoa__123EB7A3" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__KhuyenMai__MaHan__04E4BC85" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ThongKeBa__MaHan__6EF57B66" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HDLaoDong__MaNha__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HoaDon__MaKH__07C12930" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__HoaDon__MaNhanVi__08B54D69" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__KPI__MaNhanVien__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Luong__MaKPI__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Luong__MaNhanVie__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__PhieuNhap__MaNha__71D1E811" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__PhieuTraH__MaNha__797309D9" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__PhieuNhap__MaNha__72C60C4A" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__PhieuTraH__MaNha__7A672E12" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Pos__MaNhanVien__17036CC0" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__QLCaNV__MaNhanVi__534D60F1" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__ThongKeBa__MaNha__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Users__MaNhanVie__1AD3FDA4" ManuallyRouted="false" />
+        <AssociationConnector Association="QLCHTLModel.FK__Users__MaQuyen__1F98B2C1" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

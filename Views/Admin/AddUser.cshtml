@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "AddUser";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<!-- Thông báo lỗi hoặc thành công -->
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+<!-- Form tạo User -->
+<h2>Thêm User</h2>
+<form id="addUserForm" method="post">
+    <div class="form-group">
+        <label for="MaNV">Mã Nhân Viên</label>
+        <input type="number" class="form-control" id="MaNV" name="MaNV" placeholder="Nhập mã nhân viên" required />
+    </div>
+
+    <div class="form-group">
+        <label for="role">Vai trò</label>
+        <select class="form-control" id="role" name="role" required>
+            <option value="">Chọn vai trò</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo User</button>
+</form>
+<hr>
+<h3>Danh Sách User</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>UserID</th>
+            <th>Mã NV</th>
+            <th>Vai Trò</th>
+            <th>UserName</th>
+            <th>Trạng Thái</th>
+            <th>Trạng Thái Duyệt Quản Lý</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody">
+        <!-- Bảng này sẽ được điền dữ liệu qua JavaScript -->
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Gửi form qua AJAX
+    $('#addUserForm').submit(function (e) {
+        e.preventDefault();
+
+        var maNV = $('#MaNV').val();
+        var role = $('#role').val();
+
+        $.ajax({
+            url: '@Url.Action("AddUser", "Admin")', // Thay "YourController" bằng tên Controller của bạn
+            type: 'POST',
+            data: {
+                MaNV: maNV,
+                role: role
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+
+                    // Hiển thị thông báo thành công
+                    TempData["Message"] = response.message;
+
+                    // Cập nhật lại bảng người dùng
+                    updateUserTable();
+
+                    // Tải lại trang
+                    window.location.reload();
+                } else {
+                    alert(response.message); // Hiển thị thông báo lỗi
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Có lỗi xảy ra: " + error);
+            }
+        });
+    });
+
+    // Hàm cập nhật bảng danh sách người dùng
+    function updateUserTable() {
+        $.ajax({
+            url: "/Admin/GetAllUserList", // Thay "YourController" bằng tên Controller của bạn
+            type: 'GET',
+            success: function (data) {
+                var tableBody = $('#userTableBody');
+                tableBody.empty(); // Xóa dữ liệu cũ trong bảng
+
+                if (data.success === false) {
+                    alert(data.message); // Hiển thị thông báo "Không có người dùng nào"
+                } else {
+                    // Thêm từng dòng vào bảng
+                    data.forEach(function (user) {
+                        var row = '<tr>';
+                        row += '<td>' + user.UserID + '</td>';
+                        row += '<td>' + user.MaNhanVien + '</td>';
+                        row += '<td>' + user.Roles + '</td>';
+                        row += '<td>' + user.UserName.replace(/./g, '*') + '</td>';
+                        row += '<td>' + user.TrangThai + '</td>';
+                        row += '<td>' + user.TrangThaiDQL + '</td>';
+                        row += '<td><button class="btn btn-success">Phê Duyệt</button></td>';
+                        row += '</tr>';
+                        tableBody.append(row);
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Có lỗi xảy ra khi tải danh sách người dùng.");
+            }
+        });
+    }
+
+    // Khi trang được tải, cập nhật bảng
+    $(document).ready(function () {
+        updateUserTable();
+    });
+</script>
+
+<link rel="stylesheet" href="~/Content/AddUser.css" />
+

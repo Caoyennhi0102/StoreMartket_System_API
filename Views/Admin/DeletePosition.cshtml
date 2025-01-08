@@ -1,0 +1,139 @@
+﻿@model StoreMartket_System_API.Models.ChucVu
+@{
+    ViewBag.Title = "DeletePosition";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<link rel="stylesheet" href="~/Content/DeletePosition.css">
+<div class="container mt-4">
+    <h2>XÓA CHỨC VỤ</h2>
+
+    <!-- Hiển thị thông báo kết quả -->
+    <div id="resultMessage"></div>
+
+    <!-- Form chọn mã chức vụ để tìm kiếm -->
+    <form id="searchForm" method="post">
+        <div class="form-group">
+            <label for="maCV">Nhập Mã Chức Vụ:</label>
+            <input type="text" id="maCV" name="maCV" class="form-control" placeholder="Nhập mã chức vụ" />
+        </div>
+        <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
+    </form>
+
+    <hr />
+    <!-- Kết quả tìm kiếm -->
+    <div id="searchResult" style="display:none;">
+        <h4>Thông Tin Chức Vụ</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã Chức Vụ</th>
+                    <th>Tên Chức Vụ</th>
+                    <th>Mã Bộ Phận</th>
+                    <th>Tên Bộ Phận</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="resultMaCV"></td>
+                    <td id="resultTenCV"></td>
+                    <td id="resultMaBoPhan"></td>
+                    <td>id="resultTenBoPhan"</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button id="deleteButton" class="btn btn-danger">Xóa Chức Vụ</button>
+    </div>
+    <hr />
+    <!-- Danh sách chức vụ hiện tại -->
+    <h4>DANH SÁCH CHỨC VỤ</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã Chức Vụ</th>
+                <th>Tên Chức Vụ</th>
+                <th>Mã Bộ Phận</th>
+                <th>Tên Bộ Phận</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cv in ViewBag.DSCV)
+            {
+                <tr>
+                    <td>@cv.MaChucVu</td>
+                    <td>@cv.TenChucVu</td>
+                    <td>@cv.MaBoPhan</td>
+                    <td>@cv.BoPhan?.TenBoPhan</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Tìm kiếm chức vụ
+        $("#searchForm").submit(function (e) {
+            e.preventDefault();
+
+            const maCV = $("#maCV").val();
+
+            $.post("/Admin/SearchPosition", { maCV: maCV }, function (data) {
+                if (data.success) {
+                    $("#resultMaCV").text(data.MaChucVu);
+                    $("#resultTenCV").text(data.TenCV);
+                    $("#resultMaBoPhan").text(data.MaBoPhan);
+                    $("#resultTenBoPhan").text(data.tenBoPhan);
+
+
+                    $("#searchResult").show();
+                    $("#resultMessage").html("");
+                } else {
+                    $("#searchResult").hide();
+                    $("#resultMessage").html(`<div class="alert alert-danger">${data.message}</div>`);
+                }
+            }).fail(function () {
+                $("#resultMessage").html('<div class="alert alert-danger">Lỗi khi tìm kiếm.</div>');
+            });
+        });
+
+        // Xóa chức vụ
+        $("#deleteButton").click(function () {
+            const maCV = $("#resultMaCV").text();
+
+            $.post("/Admin/DeletePosition", { MaCV: maCV }, function (data) {
+                if (data.success) {
+                    $("#resultMessage").html(`<div class="alert alert-success">${data.message}</div>`);
+                    $("#searchResult").hide();
+                } else {
+                    $("#resultMessage").html(`<div class="alert alert-danger">${data.message}</div>`);
+                }
+            }).fail(function () {
+                $("#resultMessage").html('<div class="alert alert-danger">Lỗi khi xóa chức vụ.</div>');
+            });
+        });
+    });
+</script>
+

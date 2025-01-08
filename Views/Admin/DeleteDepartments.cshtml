@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "DeleteDepartments";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<div>
+    <link rel="stylesheet" href="~/Content/DeleteDepartments.css">
+    <h2>Tìm kiếm bộ phận</h2>
+
+    <form id="searchDepartmentForm">
+        <label for="maBP" style="font-weight:bold; font-size: 18px; color:white;">Mã Bộ Phận:</label>
+        <input type="text" id="maBP" name="maBP" required />
+        <button type="submit">Tìm kiếm</button>
+    </form>
+
+    <div id="searchResult" style="margin-top: 20px; display: none;">
+        <h3>Kết quả tìm kiếm:</h3>
+        <p><strong>Mã Bộ Phận:</strong> <span id="resultMaBP"></span></p>
+        <p><strong>Tên Bộ Phận:</strong> <span id="resultTenBP"></span></p>
+        <p><strong>Tên Cửa Hàng:</strong> <span id="resultTenCH"></span></p>
+        <button id="deleteButton">Xóa Bộ Phận</button>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Tìm kiếm bộ phận
+    $('#searchDepartmentForm').on('submit', function (e) {
+        e.preventDefault();
+        const maBP = $('#maBP').val();
+
+        $.ajax({
+            url: '@Url.Action("SearchDepartmentsByID", "Admin")',
+            type: 'POST',
+            data: { MaBP: maBP },
+            success: function (response) {
+                if (response.success) {
+                    $('#searchResult').show();
+                    $('#resultMaBP').text(response.data.MaBoPhan);
+                    $('#resultTenBP').text(response.data.TenBoPhan);
+                    $('#resultTenCH').text(response.data.TenCuaHang);
+                } else {
+                    alert(response.message);
+                    $('#searchResult').hide();
+                }
+            },
+            error: function () {
+                alert("Có lỗi xảy ra trong quá trình tìm kiếm.");
+            }
+        });
+    });
+
+    // Xóa bộ phận
+    $('#deleteButton').on('click', function () {
+        const maBP = $('#resultMaBP').text();
+
+        if (confirm("Bạn có chắc chắn muốn xóa bộ phận này?")) {
+            $.ajax({
+                url: '@Url.Action("DeleteDepartments", "Admin")',
+                type: 'POST',
+                data: { MaBP: maBP },
+                success: function (response) {
+                    alert(response.message);
+                    if (response.success) {
+                        $('#searchResult').hide();
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra trong quá trình xóa.");
+                }
+            });
+        }
+    });
+</script>
+
+

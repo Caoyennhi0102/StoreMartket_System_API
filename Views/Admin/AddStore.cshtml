@@ -1,0 +1,154 @@
+﻿@{
+    ViewData["Title"] = "THÊM CỬA HÀNG";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+
+<h2>@ViewData["Title"]</h2>
+<link rel="stylesheet" href="~/Content/AddStore.css">
+<!-- Form nhập thông tin cửa hàng -->
+<form id="addStoreForm">
+    <div class="form-grid">
+        <input type="text" id="tenCH" name="tenCH" placeholder="Tên cửa hàng" oninput="updateEmail()" required />
+        <input type="text" id="diaChi" name="diaChi" placeholder="Địa chỉ" oninput="updateEmail()" required />
+        <input type="text" id="dienThoai" name="dienThoai" placeholder="Số điện thoại" required />
+        <input type="email" id="email" name="email" placeholder="Email" readonly />
+        <input type="text" id="mst" name="mst" placeholder="Mã số thuế" required />
+        <input type="number" id="chTruong" name="chTruong" placeholder="Mã nhân viên trưởng cửa hàng" required />
+        <!-- Hiển thị số lượng nhân viên -->
+        <div class="info">
+            <label for="soluongNhanVien">Số lượng nhân viên hiện tại:</label>
+            <input type="text" id="soluongNhanVien" value="@ViewData["SLNV"]" readonly />
+        </div>
+        <button type="submit">Thêm cửa hàng</button>
+    </div>
+</form>
+<h3>Danh Sách Cửa Hàng</h3>
+<table id="storeTable">
+
+    <thead>
+
+        <tr>
+
+            <th>Mã cửa hàng</th>
+            <th>Tên cửa hàng</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            <th>Mã số thuế</th>
+            <th>Mã Nhân Viên CHT</th>
+            <th>Số lượng nhân viên</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Danh sách cửa hàng sẽ được thêm vào đây -->
+    </tbody>
+</table>
+
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script>
+
+    $(document).ready(function () {
+        // Gửi dữ liệu form và thêm cửa hàng
+        $('#addStoreForm').submit(function (event) {
+            event.preventDefault(); // Ngừng form submit mặc định
+
+            var formData = {
+                tenCH: $('#tenCH').val(),
+                diaChi: $('#diaChi').val(),
+                dienThoai: $('#dienThoai').val(),
+                email: $('#email').val(),
+                mst: $('#mst').val(),
+                chTruong: $('#chTruong').val(),
+
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddStore")', // Đảm bảo url này trỏ đúng đến action AddStore
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message); // Hiển thị thông báo thành công
+                        loadStoreList(); // Cập nhật danh sách cửa hàng
+                    } else {
+                        alert(response.message); // Hiển thị thông báo lỗi
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra khi thêm cửa hàng. Vui lòng thử lại.");
+                }
+            });
+        });
+
+        // Hàm tải lại danh sách cửa hàng
+        function loadStoreList() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetStoreList")', // Gọi action GetStoreList để lấy danh sách cửa hàng
+                success: function (stores) {
+                    var tableBody = $('#storeTable tbody');
+                    tableBody.empty(); // Xóa các hàng cũ trong bảng
+
+                    // Thêm dữ liệu mới vào bảng
+                    stores.forEach(function (store) {
+                        var row = `<tr>
+                            <td>${store.MaCuaHang}</td>
+                            <td>${store.TenCH}</td>
+                            <td>${store.DiaChi}</td>
+                            <td>${store.DienThoai}</td>
+                            <td>${store.Email}</td>
+                            <td>${store.MST}</td>
+                            <td>${store.chTruong}</td>
+                            <td>${store.SLNV}</td>
+                        </tr>`;
+                        tableBody.append(row);
+                    });
+                },
+                error: function () {
+                    alert("Không thể tải danh sách cửa hàng.");
+                }
+            });
+        }
+
+        // Tải lại danh sách cửa hàng khi trang được tải
+        loadStoreList();
+    });
+</script>
+
+<script>
+    function updateEmail() {
+        // Lấy giá trị từ các trường
+        const tenCH = document.getElementById('tenCH').value.trim().toLowerCase().replace(/ /g, '.');
+        const maCH = document.getElementById('maCH').value.trim();
+
+        // Kiểm tra nếu cả hai giá trị đều tồn tại
+        if (tenCH && maCH) {
+           const email = `${tenCH}.${maCH}@@ViewData["Domain"]`;
+            document.getElementById('email').value = email; // Cập nhật giá trị cho trường email
+        } else {
+            document.getElementById('email').value = ''; // Reset email nếu thiếu dữ liệu
+        }
+    }
+</script>
+
+

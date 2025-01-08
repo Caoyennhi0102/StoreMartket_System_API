@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewBag.Title = "Cập Nhật Cửa Hàng";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<div class="container">
+    <h2>CẬP NHẬT THÔNG TIN CỬA HÀNG</h2>
+    <link rel="stylesheet" href="~/Content/UpdateStore.css">
+    <form id="searchForm" method="post">
+
+        <div class="form-group">
+            <label for="MaCuaHang">Mã cửa hàng:</label>
+            <input type="text" id="maCuaHang" name="MaCuaHang" class="form-control" placeholder="Nhập mã cửa hàng" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </form>
+    <!-- Kết quả tìm kiếm -->
+    <div id="searchResult" class="mt-3"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+   $('#searchForm').submit(function (e) {
+    e.preventDefault();
+
+    var maCH = $('#maCuaHang').val();
+
+    // Kiểm tra nếu maCH là số
+    if (isNaN(maCH) || maCH.trim() === "") {
+        $('#searchResult').html("<p class='text-danger'>Mã cửa hàng không hợp lệ. Vui lòng nhập mã cửa hàng hợp lệ.</p>");
+        return;
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("SearchStore", "Admin")',
+        data: { maCH: maCH },
+        success: function (response) {
+            console.log(response);
+            if (response && response.success === false) {
+                $('#searchResult').html("<p class='text-danger'>" + response.message + "</p>");
+            } else if (response && response.success === true && response.store) {
+                var store = response.store;
+                $('#searchResult').html("<p class='text-success'>Cửa hàng tìm thấy: " + store.TenCH + "</p>");
+                $('#storeMaCuaHang').val(store.MaCuaHang);
+                $('#tenCH').val(store.TenCH);
+                $('#diaChi').val(store.DiaChi);
+                $('#dienThoai').val(store.DienThoai);
+                $('#email').val(store.Email);
+                $('#mst').val(store.MST);
+                $('#chTruong').val(store.CHTruong);
+                $('#soluongNhanVien').val(store.SLNV);
+                $('#updateForm').show();
+                // Hiển thị cửa hàng trong bảng danh sách
+                var storeRow = "<tr id='store_" + store.MaCuaHang + "'>" +
+                    "<td>" + store.MaCuaHang + "</td>" +
+                    "<td>" + store.TenCH + "</td>" +
+                    "<td>" + store.DiaChi + "</td>" +
+                    "<td>" + store.DienThoai + "</td>" +
+                    "<td>" + store.Email + "</td>" +
+                    "<td>" + store.MST + "</td>" +
+                    "<td>" + store.CHTruong + "</td>" +
+                    "<td>" + store.SLNV + "</td>"+
+                    "<td><button class='btn btn-warning' onclick='editStore(\"" + store.MaCuaHang + "\")'>Sửa</button></td>" +
+                    "</tr>";
+                // Nếu đã có dòng, cập nhật; nếu chưa có, thêm mới
+                var existingRow = $('#store_' + store.MaCuaHang);
+                if (existingRow.length > 0) {
+                    existingRow.replaceWith(storeRow); // Cập nhật dòng
+                } else {
+                    $('#storeListBody').append(storeRow); // Thêm dòng mới vào bảng
+                }
+            } else {
+                $('#searchResult').html("<p class='text-danger'> Mã cửa hàng không tồn tại</p>");
+            }
+        },
+        error: function () {
+            $('#searchResult').html("<p class='text-danger'>Đã xảy ra lỗi. Vui lòng thử lại.</p>");
+        }
+    });
+});
+
+    </script>
+
+    <!-- Form cập nhật thông tin cửa hàng -->
+    <form id="updateForm" style="display:none;" method="post">
+        <input type="hidden" id="storeMaCuaHang" name="maCH" />
+        <div class="form-group">
+            <label for="TenCH">Tên cửa hàng:</label>
+            <input type="text" id="tenCH" name="tenCH" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="DiaChi">Địa chỉ:</label>
+            <input type="text" id="diaChi" name="diaChi" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="DienThoai">Điện thoại:</label>
+            <input type="text" id="dienThoai" name="dienThoai" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="Email">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="MST">Mã số thuế:</label>
+            <input type="text" id="mst" name="mst" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="CHTruong">Trưởng cửa hàng:</label>
+            <input type="text" id="chTruong" name="chTruong" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <div class="info">
+                <label for="soluongNhanVien">Số lượng nhân viên hiện tại:</label>
+                <input type="text" id="soluongNhanVien" value="@ViewData["SLNV"]" readonly />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Cập nhật</button>
+    </form>
+</div>
+<h3>Danh Sách Cửa Hàng</h3>
+<div id="storeList" class="mt-3">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã Cửa Hàng</th>
+                <th>Tên Cửa Hàng</th>
+                <th>Địa Chỉ</th>
+                <th>Điện Thoại</th>
+                <th>Email</th>
+                <th>Mã Số Thuế</th>
+                <th>Trưởng Cửa Hàng</th>
+                <th>Số Lượng Nhân Viên</th>
+            </tr>
+        </thead>
+        <tbody id="storeListBody">
+            <!-- Các cửa hàng sẽ được hiển thị ở đây -->
+        </tbody>
+    </table>
+</div>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script>
+
+        // Cập nhật cửa hàng
+        $('#updateForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = {
+                maCH: $('#storeMaCuaHang').val(),
+                tenCH: $('#tenCH').val(),
+                diaChi: $('#diaChi').val(),
+                dienThoai: $('#dienThoai').val(),
+                email: $('#email').val(),
+                mst: $('#mst').val(),
+                chTruong: $('#chTruong').val() || null,
+                slnv: $('#soluongNhanVien').val()
+
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateStore", "Admin")',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        $('#searchResult').html("<p class='text-success'>" + response.message + "</p>");
+                    } else {
+                        $('#searchResult').html("<p class='text-danger'>" + response.message + "</p>");
+                    }
+                },
+                error: function () {
+                    $('#searchResult').html("<p class='text-danger'>Đã xảy ra lỗi. Vui lòng thử lại.</p>");
+                }
+            });
+        });
+
+</script>
+<script>
+    $('#updateForm').submit(function (e) {
+    e.preventDefault();
+
+    var formData = {
+        maCH: $('#storeMaCuaHang').val(),
+        tenCH: $('#tenCH').val(),
+        diaChi: $('#diaChi').val(),
+        dienThoai: $('#dienThoai').val(),
+        email: $('#email').val(),
+        mst: $('#mst').val(),
+        chTruong: $('#chTruong').val() || null
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("UpdateStore", "Admin")',
+        data: formData,
+        success: function (response) {
+            if (response.success) {
+                $('#searchResult').html("<p class='text-success'>" + response.message + "</p>");
+
+                // Cập nhật lại dòng cửa hàng trong bảng
+                var updatedStoreRow = "<tr id='store_" + formData.maCH + "'>" +
+                    "<td>" + formData.maCH + "</td>" +
+                    "<td>" + formData.tenCH + "</td>" +
+                    "<td>" + formData.diaChi + "</td>" +
+                    "<td>" + formData.dienThoai + "</td>" +
+                    "<td>" + formData.email + "</td>" +
+                    "<td>" + formData.mst + "</td>" +
+                    "<td>" + formData.chTruong + "</td>" +
+                    "<td><button class='btn btn-warning' onclick='editStore(\"" + formData.maCH + "\")'>Sửa</button></td>" +
+                    "</tr>";
+
+                // Thay thế dòng trong bảng nếu có
+                var existingRow = $('#store_' + formData.maCH);
+                if (existingRow.length > 0) {
+                    existingRow.replaceWith(updatedStoreRow);
+                } else {
+                    $('#storeListBody').append(updatedStoreRow);
+                }
+
+                // Ẩn form cập nhật sau khi thành công
+                $('#updateForm').hide();
+            } else {
+                $('#searchResult').html("<p class='text-danger'>" + response.message + "</p>");
+            }
+        },
+        error: function () {
+            $('#searchResult').html("<p class='text-danger'>Đã xảy ra lỗi. Vui lòng thử lại.</p>");
+        }
+    });
+});
+</script>

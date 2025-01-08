@@ -1,0 +1,94 @@
+﻿
+h2 {
+    color: red;
+    text-align: center;
+}
+/* Căn giữa form tìm kiếm và tạo khoảng cách từ trên */
+form {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+input[type="text"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+/* Hiển thị kết quả tìm kiếm */
+#searchResult {
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+    #searchResult h3 {
+        color: #333;
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    #searchResult p {
+        font-size: 16px;
+        color: #555;
+    }
+
+    #searchResult button {
+        background-color: #f44336;
+    }
+
+        #searchResult button:hover {
+            background-color: #e53935;
+        }
+
+/* Định dạng cho alert box */
+.alert {
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+}
+
+/* Thêm một vài kiểu chỉnh sửa để phần footer có khoảng cách */
+footer {
+    margin-top: 50px;
+    text-align: center;
+    color: #777;
+}

@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "DeleteDepartment";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đảm bảo đường dẫn đúng
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>XÓA CỬA HÀNG</h2>
+<form id="updateForm">
+    <input type="text" id="maCuaHang" placeholder="Nhập Mã Cửa Hàng" />
+    <button type="button" id="btnSearch">Tìm Kiếm</button>
+    <br />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="~/Content/DeleteStore.css" />
+    <div id="searchResult" class="mt-3"></div>
+    <script>
+        $("#btnSearch").click(function () {
+            var maCH = $("#maCuaHang").val().trim();
+
+            if (isNaN(maCH) || maCH.trim() === "") {
+                $('#searchResult').html("<p class='text-danger'>Mã cửa hàng không hợp lệ. Vui lòng nhập mã cửa hàng hợp lệ.</p>");
+                return;
+            }
+
+            $.ajax({
+                url: "/Admin/SearchStore",
+                type: "POST",
+                data: { maCH: maCH },
+                success: function (response) {
+                    if (response.success) {
+                        var store = response.store;
+                        $("#resultMaCuaHang").text(store.MaCuaHang);
+                        $("#resultTenCuaHang").text(store.TenCH);
+                        $("#resultDiaChi").text(store.DiaChi);
+                        $("#resultDienThoai").text(store.DienThoai);
+                        $("#resultEmail").text(store.Email);
+                        $("#resultMaST").text(store.MST);
+                        $("#resultCHT").text(store.CHTruong);
+                        $("#resultSLNV").text(store.SLNV);
+                        $("#resultContainer").show();
+                        $("#btnDelete").prop("disabled", false);
+                    } else {
+                        $('#searchResult').html(`<p class='text-danger'>${response.message}</p>`);
+                        $("#resultContainer").hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi xảy ra:", status, error);
+                    alert("Có lỗi xảy ra khi tìm kiếm.");
+                }
+            });
+        });
+
+    </script>
+
+    <div id="resultContainer" style="margin-top: 20px; display: none;">
+        <table border="1" style="width: 50%; text-align: center;">
+            <thead>
+                <tr>
+                    <h3>KẾT QUẢ TÌM KIẾM</h3>
+                    <th>Mã Cửa Hàng</th>
+                    <th>Tên Cửa Hàng</th>
+                    <th>Địa Chỉ</th>
+                    <th>Điện Thoại</th>
+                    <th>Email</th>
+                    <th>Mã Số Thuế</th>
+                    <th>Trưởng Cửa Hàng</th>
+                    <th>Số Lượng Nhân Viên</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="resultMaCuaHang"></td>
+                    <td id="resultTenCuaHang"></td>
+                    <td id="resultDiaChi"></td>
+                    <td id="resultDienThoai"></td>
+                    <td id="resultEmail"></td>
+                    <td id="resultMaST"></td>
+                    <td id="resultCHT"></td>
+                    <td id="resultSLNV"></td>
+
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <button type="button" id="btnDelete" disabled>XÓA</button>  <!-- Nút xóa được disable cho đến khi tìm thấy bộ phận -->
+    </div>
+</form>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script>
+
+    $("#btnDelete").click(function () {
+        var maCH = $("#maCuaHang").val().trim();
+
+        if (confirm("Bạn có chắc chắn muốn xóa cửa hàng này?")) {
+            $.ajax({
+                url: "/Admin/DeleteStore",
+                type: "POST",
+                data: { maCH: maCH },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $("#resultContainer").hide();
+                        $("#maCuaHang").val("");
+                        $("#btnDelete").prop("disabled", true);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi xảy ra khi xóa:", status, error);
+                    alert("Có lỗi xảy ra khi xóa cửa hàng.");
+                }
+            });
+        }
+    });
+
+</script>

@@ -1,0 +1,143 @@
+﻿@{
+    ViewBag.Title = "UpdateDepartments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>TÌM KIẾM VÀ CẬP NHẬT BỘ PHẬN</h2>
+<link rel="stylesheet" href="~/Content/UpdateDepartments.css">
+<!-- Form Tìm Kiếm -->
+<form id="search-department-form">
+    <div class="form-group">
+        <label for="maBoPhan">Mã Bộ Phận</label>
+        <input type="text" id="maBoPhan" name="maBoPhan" class="form-control" placeholder="Nhập mã bộ phận" />
+    </div>
+    <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
+</form>
+
+<!-- Kết Quả Tìm Kiếm -->
+<div id="search-result-container" style="margin-top: 20px; display: none;">
+    <h3>Kết Quả Tìm Kiếm</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã Bộ Phận</th>
+                <th>Tên Bộ Phận</th>
+                <th>Mã Cửa Hàng</th>
+            </tr>
+        </thead>
+        <tbody id="search-result-body"></tbody>
+    </table>
+</div>
+
+<!-- Form Cập Nhật -->
+<div id="update-form-container" style="display: none;">
+    <h3>Cập Nhật Bộ Phận</h3>
+    <form id="update-department-form">
+        <div class="form-group">
+            <label for="tenBoPhan">Tên Bộ Phận</label>
+            <input type="text" id="tenBoPhan" name="tenBoPhan" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="maCuaHang">Cửa Hàng</label>
+            <select id="maCuaHang" name="maCuaHang" class="form-control">
+                @foreach (var item in ViewBag.Store as SelectList)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Cập Nhật</button>
+    </form>
+</div>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Xử lý tìm kiếm
+        $('#search-department-form').submit(function (e) {
+            e.preventDefault();
+            $('#search-result-body').empty();
+            $('#search-result-container').hide();
+            $('#update-form-container').hide();
+
+            const maBoPhan = $('#maBoPhan').val();
+            $.ajax({
+                url: '@Url.Action("SearchDepartmentsByID", "Admin")',
+                type: 'POST',
+                data: { MaBP: maBoPhan },
+                success: function (response) {
+                    if (response.success) {
+                        const data = response.data;
+                        $('#search-result-container').show();
+                        $('#update-form-container').show();
+
+                        // Hiển thị dữ liệu trong bảng
+                        $('#search-result-body').append(`
+                            <tr>
+                                <td>${data.MaBoPhan}</td>
+                                <td>${data.TenBoPhan}</td>
+                                <td>${data.MaCuaHang}</td>
+                            </tr>
+                        `);
+
+                        // Điền dữ liệu vào form
+                        $('#tenBoPhan').val(data.TenBoPhan);
+                        $('#maCuaHang').val(data.MaCuaHang);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // Xử lý cập nhật
+        $('#update-department-form').submit(function (e) {
+            e.preventDefault();
+
+            const maBoPhan = $('#maBoPhan').val();
+            const tenBoPhan = $('#tenBoPhan').val();
+            const maCuaHang = $('#maCuaHang').val();
+
+            $.ajax({
+                url: '@Url.Action("UpdateDepartments", "Admin")',
+                type: 'POST',
+                data: { maBoPhan: maBoPhan, tenBoPhan: tenBoPhan, maCuaHang: maCuaHang },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Cập nhật thành công!');
+
+                        // Cập nhật lại dữ liệu trong bảng
+                        $('#search-result-body').empty();
+                        $('#search-result-body').append(`
+                            <tr>
+                                <td>${maBoPhan}</td>
+                                <td>${tenBoPhan}</td>
+                                <td>${maCuaHang}</td>
+                            </tr>
+                        `);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+    });
+</script>

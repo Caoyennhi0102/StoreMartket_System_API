@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>THÊM CHỨC VỤ</h2>
+<link rel="stylesheet" href="~/Content/AddPosition.css">
+<div class="container">
+    <!-- Form thêm chức vụ -->
+    <form id="addPositionForm" method="post">
+        <div class="form-group">
+            <label for="TenCV">Tên Chức Vụ:</label>
+            <input type="text" class="form-control" id="TenCV" name="TenCV" placeholder="Nhập tên chức vụ" required>
+        </div>
+        <div class="form-group">
+            <label for="MaBP">Chọn Bộ Phận:</label>
+            <select class="form-control" id="MaBP" name="MaBP" required>
+                <option value="">-- Chọn bộ phận --</option>
+                @foreach (var item in ViewBag.DSBoPhan as SelectList)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Thêm Chức Vụ</button>
+    </form>
+</div>
+<hr />
+<!-- Bảng danh sách chức vụ (nằm ngoài form) -->
+<div class="container">
+    <h3>DANH SÁCH CHỨC VỤ</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã Bộ Phận</th>
+                <th>Tên Bộ Phận</th>
+                <th>Mã Chức Vụ</th>
+                <th>Tên Chức Vụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.DSCV != null)
+            {
+                foreach (var chucVu in ViewBag.DSCV)
+                {
+                    <tr>
+                        <td>@chucVu.MaBP</td> <!-- Hiển thị mã bộ phận -->
+                        <td>@chucVu.BoPhan?.TenBoPhan</td> <!-- Hiển thị tên bộ phận -->
+                        <td>@chucVu.MaChucVu</td> <!-- Hiển thị mã chức vụ -->
+                        <td>@chucVu.TenChucVu</td> <!-- Hiển thị tên chức vụ -->
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">Chưa có dữ liệu chức vụ.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+<!-- Kết nối với thư viện jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        // Xử lý khi gửi form thêm chức vụ
+        $("#addPositionForm").submit(function (event) {
+            event.preventDefault(); // Ngừng việc submit form mặc định
+
+            var tenCV = $("#TenCV").val().trim();
+            var maBP = $("#MaBP").val();
+
+            if (!tenCV || !maBP) {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+            $.ajax({
+                url: "/Admin/AddPosition", // Đường dẫn tới action thêm chức vụ
+                type: "POST",
+                data: {
+                    TenCV: tenCV,
+                    MaBP: maBP
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Tạo dòng mới trong bảng
+                        var newRow = "<tr class='new-row'>" +
+                            "<td>" + response.MaBP + "</td>" +
+                            "<td>" + response.TenBoPhan + "</td>" +
+                            "<td>" + response.MaChucVu + "</td>" +
+                            "<td>" + response.TenChucVu + "</td>" +
+                            "</tr>";
+                        $("#positionTable tbody").append(newRow); // Thêm dòng mới vào bảng
+                        alert("Thêm chức vụ thành công!");
+
+                        // Reset form sau khi thêm thành công
+                        $("#addPositionForm")[0].reset();
+                    } else {
+                        alert(response.message); // Hiển thị thông báo lỗi nếu thêm không thành công
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi:", error); // Log lỗi ra console
+                    alert("Có lỗi xảy ra khi thêm chức vụ.");
+                }
+            });
+        });
+</script>

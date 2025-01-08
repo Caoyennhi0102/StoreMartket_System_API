@@ -1,0 +1,81 @@
+﻿/* Định dạng layout của form */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột đều nhau */
+    gap: 20px; /* Khoảng cách giữa các ô */
+    margin-bottom: 30px; /* Khoảng cách dưới form */
+    padding: 20px; /* Khoảng cách trong cho toàn bộ form */
+    background-color: #f9f9f9; /* Nền nhạt để tách biệt */
+    border: 1px solid #ddd; /* Viền nhẹ */
+    border-radius: 8px; /* Bo góc */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px; /* Khoảng cách dưới cho thẻ h2 */
+    color: red;
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 20px; /* Khoảng cách dưới cho thẻ h2 */
+    color: red;
+}
+/* Style cho các input */
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; /* Full chiều rộng */
+    box-sizing: border-box; /* Gộp padding vào kích thước */
+}
+
+/* Style cho nút button */
+button[type="submit"] {
+    grid-column: 1 / span 3; /* Chiếm toàn bộ 3 cột */
+    justify-self: center; /* Căn giữa nút */
+    padding: 10px 20px;
+    background-color: #0094ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+    button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+/* Style cho bảng */
+#storeTable {
+    width: 100%;
+    border-collapse: collapse; /* Xóa viền trùng lặp */
+    margin-top: 20px;
+    border: 2px solid #4CAF50; /* Viền xung quanh bảng */
+}
+
+    #storeTable th, #storeTable td {
+        border: 1px solid #4CAF50; /* Viền giữa các ô */
+        padding: 10px;
+        text-align: left;
+    }
+
+    #storeTable th {
+        background-color: #0094ff;
+        color: white;
+        font-weight: bold;
+        text-align: center; /* Căn giữa nội dung trong tiêu đề */
+    }
+
+    #storeTable tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #storeTable tr:hover {
+        background-color: #ddd;
+    }
