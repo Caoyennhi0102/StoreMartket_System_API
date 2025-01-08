@@ -826,7 +826,91 @@ namespace StoreMartket.Controllers
                 return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
             }
         }
-        public ActionResult Approve(int userID, string Action)
+        [HttpGet]
+        public ActionResult GetUserByMaNhanVien(int MaNV)
+        {
+            var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
+            if(user == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy User với mã nhân viên này." });
+            }
+            return Json(new
+            {
+                success = true,
+                data = new
+                {
+                    UserID = user.UserID,
+                    MaNhanVien = user.MaNhanVien,
+                    Roles = user.Roles,
+                    TrangThai = user.TrangThai
+                }
+            });
+        }
+        [HttpGet]
+        public ActionResult UpdateUser()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult UpdateUser(User userUpdate, int? MaNV)
+        {
+            try
+            {
+                if (MaNV == null || MaNV <= 0)
+                {
+                    return Json(new { success = false, message = "Vui lòng nhập mã nhân viên hợp lệ" });
+                }
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if (nhanvien == null)
+                {
+                    return Json(new { success = false, message = "Mã nhân viên không tồn tại." });
+                }
+                var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.UserID == userUpdate.UserID);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy User để cập nhật." });
+                }
+                user.MaNhanVien = userUpdate.MaNhanVien;
+                user.Roles = userUpdate.Roles;
+                user.TrangThai = userUpdate.TrangThai = "Chờ Duyệt";
+                user.TrangThaiDuyetQL = userUpdate.TrangThaiDuyetQL = "Chờ Duyệt";
+                _sqlConnectionserver.SaveChanges();
+
+                var managerEmail = _sqlConnectionserver.NhanViens
+          .Where(nv =>
+              nv.MaChucVu == _sqlConnectionserver.ChucVus
+                  .Where(cv => cv.TenChucVu == "Quản lý cửa hàng")
+                  .Select(cv => cv.MaChucVu)
+                  .FirstOrDefault() &&
+              nv.MaBoPhan == nhanvien.MaBoPhan)
+          .Select(nv => nv.Email)
+          .FirstOrDefault();
+                if (string.IsNullOrEmpty(managerEmail))
+                {
+                    return Json(new { success = true, message = "User đã được tạo nhưng không tìm thấy Quản lý cửa hàng để gửi email phê duyệt." });
+                }
+                var emailService = new EmailService();
+                string subject = "Phê duyệt User mới";
+                string body = $@"
+        Xin chào Quản lý,<br/><br/>
+        Nhân viên {user.MaNhanVien} (UserID: {user.UserID}) đã được cập nhật thông tin.<br/>
+        Vui lòng phê duyệt hoặc từ chối tài khoản tại đường dẫn sau:<br/>
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Approve'>Phê duyệt</a> | 
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Reject'>Từ chối</a>";
+
+                emailService.SendEmail(managerEmail, subject, body);
+                return Json(new { success = true, message = "User đã được cập nhật và email phê duyệt đã được gửi đến quản lý." });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = true, message = $"User đã được cập nhật nhưng không thể gửi email phê duyệt. Chi tiết lỗi: {ex.Message}" });
+            }
+
+           
+
+
+        }
+        public ActionResult Approve(int userID, string Action, string OperationType)
         {
             try
             {
@@ -835,26 +919,72 @@ namespace StoreMartket.Controllers
                 {
                     return Json(new { success = false, message = "User không tồn tại." });
                 }
-                if(Action == "Approve")
+                if (OperationType == "Add")
                 {
-                    user.TrangThaiDuyetQL = "Approve";
-                    user.DNLanDau = true;
-                    _sqlConnectionserver.SaveChanges();
+                    if (Action == "Approve")
+                    {
+                        user.TrangThaiDuyetQL = "Approve";
+                        user.DNLanDau = true;
+                        _sqlConnectionserver.SaveChanges();
 
-                    var emailService = new EmailService();
-                    string subject = "User của bạn đã được phê duyệt";
-                    string body = $"Xin chào {user.UserName},<br/>Tài khoản của bạn đã được phê duyệt. Vui lòng đăng nhập để đổi mật khẩu để sử dụng.";
-                    emailService.SendEmail(user.NhanVien.Email, subject, body);
+                        var emailService = new EmailService();
+                        string subject = "User của bạn đã được phê duyệt";
+                        string body = $"Xin chào {user.UserName}{user.PasswordHash},<br/>User của bạn đã được phê duyệt. Vui lòng đăng nhập để đổi mật khẩu để sử dụng.";
+                        emailService.SendEmail(user.NhanVien.Email, subject, body);
 
-                    return Json(new { success = true, message = "Tài khoản đã được phê duyệt." });
+                        return Json(new { success = true, message = "Tài khoản đã được phê duyệt." });
+                    }
+                    else if (Action == "Reject")
+                    {
+                        user.TrangThaiDuyetQL = "Reject";
+                        _sqlConnectionserver.SaveChanges();
+
+                        return Json(new { success = true, message = "Tài khoản đã bị từ chối." });
+
+                    }
                 }
-                else if(Action == "Reject")
+                // Logic xử lý cho cập nhật user
+                if (OperationType == "Update")
                 {
-                    user.TrangThaiDuyetQL = "Reject";
-                    _sqlConnectionserver.SaveChanges();
+                    if (Action == "Approve")
+                    {
+                        user.TrangThaiDuyetQL = "Approve";
+                        _sqlConnectionserver.SaveChanges();
 
-                    return Json(new { success = true, message = "Tài khoản đã bị từ chối." });
+                        var emailService = new EmailService();
+                        string subject = "User của bạn đã được cập nhật và phê duyệt";
+                        string body = $"Xin chào {user.UserName},<br/>Thông tin tài khoản của bạn đã được cập nhật và phê duyệt. Vui lòng đăng nhập để sử dụng.";
+                        emailService.SendEmail(user.NhanVien.Email, subject, body);
 
+                        return Json(new { success = true, message = "Cập nhật tài khoản đã được phê duyệt." });
+                    }
+                    else if (Action == "Reject")
+                    {
+                        user.TrangThaiDuyetQL = "Reject";
+                        _sqlConnectionserver.SaveChanges();
+
+                        return Json(new { success = true, message = "Cập nhật tài khoản đã bị từ chối." });
+                    }
+                }
+                // Logic xử lý cho xóa user
+                if (OperationType == "Delete")
+                {
+                    if (Action == "Approve")
+                    {
+                        _sqlConnectionserver.Users.Remove(user);
+                        _sqlConnectionserver.SaveChanges();
+
+                        var emailService = new EmailService();
+                        string subject = "User của bạn đã bị xóa";
+                        string body = $"Xin chào {user.UserName},<br/>Tài khoản của bạn đã bị xóa khỏi hệ thống. Nếu có vấn đề gì, vui lòng liên hệ với bộ phận quản lý.";
+                        emailService.SendEmail(user.NhanVien.Email, subject, body);
+
+                        return Json(new { success = true, message = "Tài khoản đã bị xóa." });
+                    }
+                    else if (Action == "Reject")
+                    {
+                        return Json(new { success = true, message = "Xóa tài khoản đã bị từ chối." });
+                    }
                 }
                 return Json(new { success = false, message = "Hành động không hợp lệ." });
             }
@@ -863,11 +993,8 @@ namespace StoreMartket.Controllers
                 return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
             }
         }
-        public ActionResult UpdateUser()
-        {
-           
-            return View();
-        }
+
+        
 
         // Hàm tạo chuỗi ngẫu nhiên
         private string GenerateRandomString(int length)
