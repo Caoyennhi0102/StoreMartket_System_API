@@ -1,0 +1,105 @@
+﻿
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    max-width: none; /* Loại bỏ giới hạn chiều rộng */
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+.btn-warning {
+    background-color: #ffc107;
+    color: black;
+}
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+/* Định dạng bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+#userInfo {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: none; /* Ẩn thông tin user mặc định */
+}
+
+h2, h3 {
+    margin-bottom: 1.5rem;
+    text-align:center;
+    color:red;
+}
+
+/* Tùy chỉnh hiển thị lỗi */
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+

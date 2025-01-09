@@ -260,6 +260,7 @@
     <Content Include="Content\UpdateDepartments.css" />
     <Content Include="Content\UpdatePosition.css" />
     <Content Include="Content\UpdateStore.css" />
+    <Content Include="Content\UpdateUser.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -319,6 +320,7 @@
     <Content Include="Views\Admin\UpdatePosition.cshtml" />
     <Content Include="Views\Admin\DeletePosition.cshtml" />
     <Content Include="Views\Admin\AddUser.cshtml" />
+    <Content Include="Views\Admin\UpdateUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

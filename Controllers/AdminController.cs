@@ -827,29 +827,32 @@ namespace StoreMartket.Controllers
             }
         }
         [HttpGet]
-        public ActionResult GetUserByMaNhanVien(int MaNV)
+        public JsonResult SearchUserByMaNV(int MaNV)
         {
             var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
-            if(user == null)
+            if (user != null)
             {
-                return Json(new { success = false, message = "Không tìm thấy User với mã nhân viên này." });
-            }
-            return Json(new
-            {
-                success = true,
-                data = new
+                return Json(new
                 {
-                    UserID = user.UserID,
-                    MaNhanVien = user.MaNhanVien,
-                    Roles = user.Roles,
-                    TrangThai = user.TrangThai
-                }
-            });
+                    success = true,
+                    data = new
+                    {
+                        UserID = user.UserID,
+                        MaNhanVien = user.MaNhanVien,
+                        Roles = user.Roles,
+                        TrangThai = user.TrangThai,
+                        TrangThaiDuyetQL = user.TrangThaiDuyetQL
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { success = false, message = "Không tìm thấy User." }, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
         public ActionResult UpdateUser()
         {
-            return View();
+            var users = _sqlConnectionserver.Users.ToList();
+           
+            return View(users);
         }
         [HttpPost]
         public ActionResult UpdateUser(User userUpdate, int? MaNV)
@@ -910,6 +913,15 @@ namespace StoreMartket.Controllers
 
 
         }
+        
+        [HttpGet]
+        public ActionResult DeleteUser()
+        {
+            var users = _sqlConnectionserver.Users.ToList();
+
+            return View(users);
+        }
+       
         public ActionResult Approve(int userID, string Action, string OperationType)
         {
             try

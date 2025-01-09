@@ -1,0 +1,131 @@
+﻿@model IEnumerable<StoreMartket_System_API.Models.User>
+@{
+    ViewBag.Title = "UpdateUser";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<link rel="stylesheet" href="~/Content/UpdateUser.css">
+<h2>Cập Nhật User</h2>
+
+<!-- Tìm kiếm User theo mã nhân viên -->
+
+<div class="form-group">
+    <label for="MaNV">Mã Nhân Viên</label>
+    <input type="number" class="form-control" id="MaNV" name="MaNV" placeholder="Nhập Mã Nhân Viên" />
+    <button id="searchBtn" class="btn btn-primary mt-2">Tìm kiếm</button>
+</div>
+
+<!-- Hiển thị thông tin User khi tìm kiếm -->
+<div id="userInfo">
+    <h3>Thông tin User:</h3>
+    <div class="form-group">
+        <label for="role">Vai trò</label>
+        <select class="form-control" id="role" name="role" required>
+            <option value="">Chọn vai trò</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="TrangThai">Trạng Thái</label>
+        <select class="form-control" id="TrangThai" name="TrangThai">
+            <option value="Khóa">Khóa</option>
+            <option value="Hoạt Động">Hoạt Động</option>
+           
+        </select>
+    </div>
+    <button id="updateBtn" class="btn btn-success">Cập Nhật</button>
+</div>
+<!-- Bảng Danh Sách User -->
+<h3>Danh Sách User</h3>
+<table class="table table-bordered" id="userTable">
+    <thead>
+        <tr>
+            <th>Mã Nhân Viên</th>
+            <th>Vai Trò</th>
+            <th>Trạng Thái</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Dữ liệu bảng sẽ được lấy từ controller -->
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.MaNhanVien</td>
+                <td>@user.Roles</td>
+                <td>@user.TrangThai</td>
+
+                <td>
+                    <button class="btn btn-warning" onclick="editUser(@user.MaNhanVien)">Chỉnh Sửa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Tìm kiếm User theo mã nhân viên
+        $("#searchBtn").click(function () {
+            var maNV = $("#MaNV").val();
+            if (maNV) {
+                $.ajax({
+                    url: '@Url.Action("SearchUserByMaNV", "Admin")',
+                    type: 'GET',
+                    data: { MaNV: maNV },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#Roles").val(response.data.Roles);
+                            $("#TrangThai").val(response.data.TrangThai);
+                           
+                            $("#userInfo").show();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            } else {
+                alert("Vui lòng nhập mã nhân viên.");
+            }
+        });
+
+        // Cập nhật User
+        $("#updateBtn").click(function () {
+            var userUpdate = {
+                UserID: $("#UserID").val(),
+                Roles: $("#Roles").val(),
+                TrangThai: $("#TrangThai").val(),
+                
+            };
+            var maNV = $("#MaNV").val();
+
+            $.ajax({
+                url: '@Url.Action("UpdateUser", "Admin")',
+                type: 'POST',
+                data: { userUpdate: userUpdate, MaNV: maNV },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload(); // Tải lại trang để cập nhật bảng
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+    });
+        // Hàm chỉnh sửa User khi nhấn "Chỉnh Sửa"
+    function editUser(maNV) {
+        // Implement logic to fill the fields with user data for editing
+    }
+</script>
+
+

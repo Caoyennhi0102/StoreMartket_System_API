@@ -16,7 +16,7 @@ namespace StoreMartket_System_API
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Admin", action = "AddUser", id = UrlParameter.Optional }
+                defaults: new { controller = "Admin", action = "AddStore", id = UrlParameter.Optional }
             );
         }
     }
