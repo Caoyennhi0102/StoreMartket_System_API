@@ -1,0 +1,130 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    text-align: center;
+    color: #007bff; /* Màu xanh tương tự View */
+    margin-top: 20px;
+}
+
+.form-group {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    max-width: none; /* Loại bỏ giới hạn chiều rộng */
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+    flex: 1; /* Giãn nhãn để nó không chiếm nhiều không gian */
+}
+
+#MaNV {
+    flex: 3; /* Chiếm nhiều không gian hơn nhãn */
+    padding: 10px;
+    border: 2px solid #ccc; /* Đường viền dày hơn */
+    border-radius: 5px; /* Bo góc */
+    font-size: 16px; /* Kích thước chữ lớn hơn */
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+    #MaNV:focus {
+        border-color: #007bff; /* Màu viền khi focus */
+    }
+
+#search-btn {
+    flex: 1; /* Nút tìm kiếm vừa vặn */
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    #search-btn:hover {
+        background-color: #0056b3; /* Màu khi hover */
+    }
+
+#search-result {
+    width: 80%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Bo góc lớn hơn */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-danger {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px; /* Kích thước chữ nhỏ hơn */
+}
+
+    .table th,
+    .table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #007bff; /* Màu xanh tương tự View */
+        color: white;
+        font-weight: bold;
+        text-align: center; /* Canh giữa */
+    }
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px; /* Bo góc giống nút tìm kiếm */
+    cursor: pointer;
+}
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+    }
+
+/* Mobile-friendly adjustments */
+@media (max-width: 768px) {
+    .form-group {
+        width: 90%;
+        flex-direction: column; /* Sắp xếp theo cột trên màn hình nhỏ */
+    }
+
+    #search-result {
+        width: 95%;
+    }
+
+    #search-btn {
+        font-size: 14px;
+    }
+
+    .table th,
+    .table td {
+        font-size: 14px;
+    }
+}

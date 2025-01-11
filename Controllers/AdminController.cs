@@ -921,7 +921,34 @@ namespace StoreMartket.Controllers
 
             return View(users);
         }
-       
+        public ActionResult DeleteUser(int userId,int? MaNV)
+        {
+            try
+            {
+                if (MaNV == null || MaNV < 0)
+                {
+                    return Json(new { success = false, message = "Không được để trống hoặc mã nhân phải lớn hơn 0" });
+
+                }
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if (nhanvien == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy User tương ứng với mã nhân viên cung cấp " });
+
+                }
+                var userDelete = _sqlConnectionserver.Users.FirstOrDefault(u => u.UserID == userId);
+                if (userDelete == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy User" });
+                }
+                _sqlConnectionserver.Users.Remove(userDelete);
+                _sqlConnectionserver.SaveChanges();
+                return Json(new { success = true, message = "Xóa User thành công " });
+            }catch(Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra trong quá trình xóa User" });
+            }
+        }
         public ActionResult Approve(int userID, string Action, string OperationType)
         {
             try

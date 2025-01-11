@@ -255,6 +255,7 @@
     <Content Include="Content\DeleteDepartments.css" />
     <Content Include="Content\DeletePosition.css" />
     <Content Include="Content\DeleteStore.css" />
+    <Content Include="Content\DeleteUsercss.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\Sidebar.css" />
     <Content Include="Content\UpdateDepartments.css" />
@@ -321,6 +322,7 @@
     <Content Include="Views\Admin\DeletePosition.cshtml" />
     <Content Include="Views\Admin\AddUser.cshtml" />
     <Content Include="Views\Admin\UpdateUser.cshtml" />
+    <Content Include="Views\Admin\DeleteUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

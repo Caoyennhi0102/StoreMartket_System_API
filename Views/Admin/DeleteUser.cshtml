@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "Quản lý User";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Xóa User</h2>
+<link rel="stylesheet" href="~/Content/DeleteUsercss.css">
+<!-- Form nhập Mã Nhân Viên -->
+<div class="form-group">
+    <label for="MaNV">Mã Nhân Viên:</label>
+    <input type="number" id="MaNV" class="form-control" placeholder="Nhập Mã Nhân Viên">
+</div>
+<button id="search-btn" class="btn btn-primary">Tìm kiếm</button>
+
+<!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
+<div id="search-result" style="margin-top: 20px;"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Xử lý khi người dùng nhấn nút "Tìm kiếm"
+        $(document).on("click", "#search-btn", function () {
+            var maNV = $("#MaNV").val();
+
+            // Xóa thông báo nếu ô input bị xóa nội dung
+            if (!maNV || maNV <= 0) {
+                $("#search-result").html(`<p class="text-danger">Vui lòng nhập Mã Nhân Viên hợp lệ.</p>`);
+                return;
+            }
+
+            // Gọi AJAX để tìm kiếm User
+            $.ajax({
+                url: '@Url.Action("SearchUserByMaNV", "Admin")', // Phương thức tìm kiếm
+                type: 'GET',
+                data: { MaNV: maNV },
+                success: function (response) {
+                    if (response.success) {
+                        var user = response.data;
+                        $("#search-result").html(`
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Mã Nhân Viên</th>
+                                        <th>Roles</th>
+                                        <th>Trạng Thái</th>
+                                        <th>Trạng Thái Duyệt QL</th>
+                                        <th>Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${user.UserID}</td>
+                                        <td>${user.MaNhanVien}</td>
+                                        <td>${user.Roles}</td>
+                                        <td>${user.TrangThai}</td>
+                                        <td>${user.TrangThaiDuyetQL}</td>
+                                        <td>
+                                            <button class="btn btn-danger delete-user" data-userid="${user.UserID}">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `);
+                    } else {
+                        // Hiển thị thông báo lỗi nếu không tìm thấy
+                        $("#search-result").html(`<p class="text-danger">${response.message}</p>`);
+                    }
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi khi tìm kiếm User.");
+                }
+            });
+        });
+
+        // Xử lý khi người dùng xóa nội dung trong ô input
+        $(document).on("input", "#MaNV", function () {
+            var maNV = $("#MaNV").val();
+
+            // Nếu ô input trống, xóa thông báo lỗi và kết quả tìm kiếm
+            if (!maNV || maNV.trim() === "") {
+                $("#search-result").html("");
+            }
+        });
+
+        // Xử lý xóa User
+        $(document).on("click", ".delete-user", function () {
+            var userId = $(this).data("userid");
+            var maNV = $("#MaNV").val();
+
+            if (confirm("Bạn có chắc chắn muốn xóa User này không?")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteUser", "Admin")', // Phương thức xóa
+                    type: 'POST',
+                    data: { userId: userId, MaNV: maNV },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $("#search-result").html(""); // Xóa kết quả hiện tại
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Đã xảy ra lỗi khi xóa User.");
+                    }
+                });
+            }
+        });
+    });
+</script>
