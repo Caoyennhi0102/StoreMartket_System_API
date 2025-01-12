@@ -1,0 +1,110 @@
+﻿@model IEnumerable<StoreMartket_System_API.Models.User>
+@{
+    ViewBag.Title = "LockUser";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+
+<h2>Tìm kiếm và Khóa User</h2>
+
+<!-- Form tìm kiếm -->
+<form id="search-form">
+    <div class="form-group">
+        <label for="maNV">Nhập Mã Nhân Viên:</label>
+        <input type="text" id="maNV" name="maNV" class="form-control" placeholder="Nhập mã nhân viên" />
+    </div>
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+</form>
+
+<hr />
+
+<!-- Kết quả tìm kiếm -->
+<div id="result">
+    @if (Model != null && Model.Any())
+    {
+        <h4>Kết quả tìm kiếm:</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã Nhân Viên</th>
+                    <th>Tên User</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.MaNhanVien</td>
+                        <td>@user.UserName</td>
+                        <td>@(user.Locked ? "Đã bị khóa" : "Hoạt động")</td>
+                        <td>
+                            @if (!user.Locked)
+                            {
+                                <button class="btn btn-danger lock-user" data-id="@user.MaNhanVien">
+                                    Khóa
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Đã bị khóa</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Tìm kiếm user
+    $(document).on('submit', '#search-form', function (e) {
+        e.preventDefault();
+        var maNV = $('#maNV').val();
+        if (!maNV) {
+            alert('Vui lòng nhập mã nhân viên.');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("SearchUserByMaNV", "Admin")',  // Đường dẫn tìm kiếm
+            type: 'GET',
+            data: { MaNV: maNV },
+            success: function (response) {
+                if (response.success) {
+                    $('#result').html(response.data);
+                } else {
+                    $('#result').html('<p>' + response.message + '</p>');
+                }
+            },
+            error: function () {
+                alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            }
+        });
+    });
+
+    // Khóa user
+    $(document).on('click', '.lock-user', function () {
+        var maNV = $(this).data('id');
+        if (confirm('Bạn có chắc chắn muốn khóa User này?')) {
+            $.ajax({
+                url: '@Url.Action("LockUser", "Admin")',  // Đường dẫn khóa user
+                type: 'POST',
+                data: { MaNV: maNV },
+                success: function (response) {
+                    alert(response.message);
+                    if (response.success) {
+                        location.reload();  // Tải lại trang sau khi khóa user
+                    }
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi khóa user.');
+                }
+            });
+        }
+    });
+</script> 

@@ -60,7 +60,7 @@ namespace StoreMartket_System_API.Controllers
             Session["FailedLoginAttempts"] = 0;
             string getClientIp = GetClientIp();
             user.DiaChiIP = getClientIp;
-            user.Locked = true;
+            user.Locked = false;
             user.TGDangNhap = DateTime.Now;
             _sqlConnectionDatabase.SaveChanges();
 

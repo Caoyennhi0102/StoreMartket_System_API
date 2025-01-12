@@ -326,7 +326,7 @@
           <Property Name="PasswordHash" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="TGDangNhap" Type="date" />
           <Property Name="TGDangXuat" Type="date" />
-          <Property Name="Locked" Type="bit" />
+          <Property Name="Locked" Type="bit" Nullable="false" />
           <Property Name="DiaChiIP" Type="nvarchar" MaxLength="50" />
           <Property Name="DNLanDau" Type="bit" />
           <Property Name="TrangThai" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -1496,7 +1496,7 @@
           <Property Name="PasswordHash" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="TGDangNhap" Type="DateTime" Precision="0" />
           <Property Name="TGDangXuat" Type="DateTime" Precision="0" />
-          <Property Name="Locked" Type="Boolean" />
+          <Property Name="Locked" Type="Boolean" Nullable="false" />
           <Property Name="DiaChiIP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DNLanDau" Type="Boolean" />
           <Property Name="TrangThai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />

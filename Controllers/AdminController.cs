@@ -863,16 +863,17 @@ namespace StoreMartket.Controllers
                 {
                     return Json(new { success = false, message = "Vui lòng nhập mã nhân viên hợp lệ" });
                 }
-                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
-                if (nhanvien == null)
+                var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if (user == null)
                 {
                     return Json(new { success = false, message = "Mã nhân viên không tồn tại." });
                 }
-                var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.UserID == userUpdate.UserID);
+                
                 if (user == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy User để cập nhật." });
                 }
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
                 user.MaNhanVien = userUpdate.MaNhanVien;
                 user.Roles = userUpdate.Roles;
                 user.TrangThai = userUpdate.TrangThai = "Chờ Duyệt";
@@ -921,6 +922,7 @@ namespace StoreMartket.Controllers
 
             return View(users);
         }
+        [HttpPost]
         public ActionResult DeleteUser(int userId,int? MaNV)
         {
             try
@@ -930,23 +932,106 @@ namespace StoreMartket.Controllers
                     return Json(new { success = false, message = "Không được để trống hoặc mã nhân phải lớn hơn 0" });
 
                 }
-                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
-                if (nhanvien == null)
+                var userDelete = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if (userDelete == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy User tương ứng với mã nhân viên cung cấp " });
 
                 }
-                var userDelete = _sqlConnectionserver.Users.FirstOrDefault(u => u.UserID == userId);
-                if (userDelete == null)
-                {
-                    return Json(new { success = false, message = "Không tìm thấy User" });
-                }
+                
+                
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
                 _sqlConnectionserver.Users.Remove(userDelete);
                 _sqlConnectionserver.SaveChanges();
-                return Json(new { success = true, message = "Xóa User thành công " });
-            }catch(Exception ex)
+                var managerEmail = _sqlConnectionserver.NhanViens
+          .Where(nv =>
+              nv.MaChucVu == _sqlConnectionserver.ChucVus
+                  .Where(cv => cv.TenChucVu == "Quản lý cửa hàng")
+                  .Select(cv => cv.MaChucVu)
+                  .FirstOrDefault() &&
+              nv.MaBoPhan == nhanvien.MaBoPhan)
+          .Select(nv => nv.Email)
+          .FirstOrDefault();
+                if (string.IsNullOrEmpty(managerEmail))
+                {
+                    return Json(new { success = true, message = "User đã được tạo nhưng không tìm thấy Quản lý cửa hàng để gửi email phê duyệt." });
+                }
+                var emailService = new EmailService();
+                string subject = "Phê duyệt User mới";
+                string body = $@"
+        Xin chào Quản lý,<br/><br/>
+        Nhân viên {userDelete.MaNhanVien} (UserID: {userDelete.UserID}) đã được xóa .<br/>
+        Vui lòng phê duyệt hoặc từ chối tài khoản tại đường dẫn sau:<br/>
+        <a href='https://yourapp.com/User/Approve?UserId={userDelete.UserID}&Action=Approve'>Phê duyệt</a> | 
+        <a href='https://yourapp.com/User/Approve?UserId={userDelete.UserID}&Action=Reject'>Từ chối</a>";
+
+                emailService.SendEmail(managerEmail, subject, body);
+                return Json(new { success = true, message = "User đã được xóa khỏi hệ thống và email phê duyệt đã được gửi đến quản lý." });
+            }
+            catch(Exception ex)
             {
-                return Json(new { success = false, message = $"Có lỗi xảy ra trong quá trình xóa User" });
+                return Json(new { success = false, message = $"Có lỗi xảy ra trong quá trình xóa User{ex.Message}" });
+            }
+        }
+        [HttpGet]
+        public ActionResult LockUser()
+        {
+            var users = _sqlConnectionserver.Users.ToList();
+            return View(users);
+        }
+        [HttpPost]
+        public ActionResult LockUser(int? MaNV)
+        {
+            try
+            {
+                if(MaNV == null || MaNV < 0)
+                {
+                    return Json(new { success = false, message = "Không được để trống hoặc mã nhân phải lớn hơn 0" });
+                }
+                var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if(user == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy User tương ứng với mã nhân viên cung cấp " });
+
+                }
+                if(user.Locked == false)
+                {
+                    return Json(new { success = false, message = "User đã bị khóa trước đó" });
+                }
+                user.TrangThai = "Lock";
+                user.Locked = true;
+                _sqlConnectionserver.SaveChanges();
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                _sqlConnectionserver.Users.Remove(user);
+                _sqlConnectionserver.SaveChanges();
+                var managerEmail = _sqlConnectionserver.NhanViens
+          .Where(nv =>
+              nv.MaChucVu == _sqlConnectionserver.ChucVus
+                  .Where(cv => cv.TenChucVu == "Quản lý cửa hàng")
+                  .Select(cv => cv.MaChucVu)
+                  .FirstOrDefault() &&
+              nv.MaBoPhan == nhanvien.MaBoPhan)
+          .Select(nv => nv.Email)
+          .FirstOrDefault();
+                if (string.IsNullOrEmpty(managerEmail))
+                {
+                    return Json(new { success = true, message = "User đã được tạo nhưng không tìm thấy Quản lý cửa hàng để gửi email phê duyệt." });
+                }
+                var emailService = new EmailService();
+                string subject = "Phê duyệt User mới";
+                string body = $@"
+        Xin chào Quản lý,<br/><br/>
+        Nhân viên {user.MaNhanVien} (UserID: {user.UserID}) đã được khóa  .<br/>
+        Vui lòng phê duyệt hoặc từ chối tài khoản tại đường dẫn sau:<br/>
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Approve'>Phê duyệt</a> | 
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Reject'>Từ chối</a>";
+
+                emailService.SendEmail(managerEmail, subject, body);
+                return Json(new { success = true, message = "User đã được khóa  và email phê duyệt đã được gửi đến quản lý." });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra trong quá trình khóa User Lỗi:{ex.Message}" });
             }
         }
         public ActionResult Approve(int userID, string Action, string OperationType)

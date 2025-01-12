@@ -21,7 +21,7 @@ namespace StoreMartket_System_API.Models
         public string PasswordHash { get; set; }
         public Nullable<System.DateTime> TGDangNhap { get; set; }
         public Nullable<System.DateTime> TGDangXuat { get; set; }
-        public Nullable<bool> Locked { get; set; }
+        public bool Locked { get; set; }
         public string DiaChiIP { get; set; }
         public Nullable<bool> DNLanDau { get; set; }
         public string TrangThai { get; set; }
