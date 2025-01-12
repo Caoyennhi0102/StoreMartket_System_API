@@ -228,6 +228,11 @@
       <DependentUpon>DatabaseServer.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Service\EmailService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -252,6 +257,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\ChangeCredentials.css" />
     <Content Include="Content\CreateDepartments.css" />
+    <Content Include="Content\CreatePermissions.css" />
     <Content Include="Content\DeleteDepartments.css" />
     <Content Include="Content\DeletePosition.css" />
     <Content Include="Content\DeleteStore.css" />
@@ -259,6 +265,7 @@
     <Content Include="Content\LockedUser.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\Sidebar.css" />
+    <Content Include="Content\UnlockUser.css" />
     <Content Include="Content\UpdateDepartments.css" />
     <Content Include="Content\UpdatePosition.css" />
     <Content Include="Content\UpdateStore.css" />
@@ -289,6 +296,10 @@
     <Content Include="Models\DatabaseServer.edmx.diagram">
       <DependentUpon>DatabaseServer.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -325,6 +336,8 @@
     <Content Include="Views\Admin\UpdateUser.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Admin\LockUser.cshtml" />
+    <Content Include="Views\Admin\UnlockUser.cshtml" />
+    <Content Include="Views\Admin\CreatePermissions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

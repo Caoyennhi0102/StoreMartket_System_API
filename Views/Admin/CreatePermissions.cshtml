@@ -1,0 +1,120 @@
+﻿@model IEnumerable<StoreMartket_System_API.Models.Quyen>
+
+@{
+    ViewBag.Title = "CreatePermissions";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Tạo Quyền Mới</h2>
+<link rel="stylesheet" href="~/Content/CreatePermissions.css">
+<!-- Form tạo quyền -->
+<form id="create-permissions-form">
+    <div class="form-group">
+        <label for="tenQuyen">Tên Quyền:</label>
+        <input type="text" id="tenQuyen" name="tenQuyen" class="form-control" placeholder="Nhập tên quyền" />
+    </div>
+    <button type="submit" class="btn btn-primary">Tạo Quyền</button>
+</form>
+
+<hr />
+<!-- Khu vực hiển thị thông báo -->
+<div id="message" style="margin-top: 20px;"></div>
+<h3>Danh Sách Quyền</h3>
+<table class="table table-bordered table-striped" id="permissions-table">
+    <thead>
+        <tr>
+            <th>Mã Quyền</th>
+            <th>Tên Quyền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var quyen in Model)
+            {
+                <tr>
+                    <td>@quyen.MaQuyen</td>
+                    <td>@quyen.TenQuyen</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2" class="text-center">Không có quyền nào!</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+ $(document).on('submit', '#create-permissions-form', function (e) {
+        e.preventDefault();
+
+        var tenQuyen = $('#tenQuyen').val();
+
+        if (!tenQuyen) {
+            $('#message').html('<div class="alert alert-warning">Vui lòng nhập tên quyền!</div>');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("CreatePermissions", "Admin")', // Đường dẫn đến phương thức CreatePermissions
+            type: 'POST',
+            data: { tenQuyen: tenQuyen },
+            success: function (response) {
+                if (response.success) {
+                    $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                    $('#tenQuyen').val(''); // Xóa nội dung trong ô nhập liệu
+                    updatePermissionsTable(); // Cập nhật lại bảng quyền
+                } else {
+                    $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                }
+            },
+            error: function () {
+                $('#message').html('<div class="alert alert-danger">Đã xảy ra lỗi khi tạo quyền!</div>');
+            }
+        });
+    });
+    // Hàm cập nhật lại bảng danh sách quyền
+    function updatePermissionsTable() {
+        $.ajax({
+            url: '@Url.Action("GetPermissions", "Admin")', // Phương thức trả về danh sách quyền
+            type: 'GET',
+            success: function (data) {
+                var tableBody = $('#permissions-table tbody');
+                tableBody.empty(); // Xóa dữ liệu cũ
+                if (data && data.length > 0) {
+                    $.each(data, function (index, quyen) {
+                        tableBody.append('<tr><td>' + quyen.MaQuyen + '</td><td>' + quyen.TenQuyen + '</td></tr>');
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="2" class="text-center">Không có quyền nào!</td></tr>');
+                }
+            },
+            error: function () {
+                $('#message').html('<div class="alert alert-danger">Không thể cập nhật danh sách quyền!</div>');
+            }
+        });
+    }
+</script>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@

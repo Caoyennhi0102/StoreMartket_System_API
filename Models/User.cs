@@ -29,6 +29,7 @@ namespace StoreMartket_System_API.Models
         public string MaQuyen { get; set; }
         public Nullable<int> MaNVQL { get; set; }
         public string TrangThaiDuyetQL { get; set; }
+        public Nullable<System.DateTime> NgayCapNhat { get; set; }
     
         public virtual NhanVien NhanVien { get; set; }
         public virtual Quyen Quyen { get; set; }

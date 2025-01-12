@@ -1000,6 +1000,7 @@ namespace StoreMartket.Controllers
                 }
                 user.TrangThai = "Lock";
                 user.Locked = true;
+                user.NgayCapNhat = DateTime.Now;
                 _sqlConnectionserver.SaveChanges();
                 var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
                 _sqlConnectionserver.Users.Remove(user);
@@ -1033,6 +1034,123 @@ namespace StoreMartket.Controllers
             {
                 return Json(new { success = false, message = $"Có lỗi xảy ra trong quá trình khóa User Lỗi:{ex.Message}" });
             }
+        }
+        [HttpGet]
+        public ActionResult UnlockUser()
+        {
+            var users = _sqlConnectionserver.Users.ToList();
+
+            return View(users);
+        }
+        [HttpPost]
+        public  ActionResult UnlockUser(int? MaNV)
+        {
+            try
+            {
+                if(MaNV ==  null ||  MaNV < 0)
+                {
+                    return Json(new { success = false, message = " Không được để trống hoặc mã nhân viên phải lớn hơn 0 " });
+
+                }
+                var user = _sqlConnectionserver.Users.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                if(user == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy User tương ứng với mã nhân viên cung cấp " });
+
+                }
+                if(user.Locked == false)
+                {
+                    return Json(new { success = false, message = "User không bị khóa vẫn hoạt động bình thường" });
+                }
+                user.Locked = false;
+                user.TrangThai = "Active";
+                user.NgayCapNhat = DateTime.Now;
+                _sqlConnectionserver.SaveChanges();
+                var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                _sqlConnectionserver.Users.Remove(user);
+                _sqlConnectionserver.SaveChanges();
+                var managerEmail = _sqlConnectionserver.NhanViens
+          .Where(nv =>
+              nv.MaChucVu == _sqlConnectionserver.ChucVus
+                  .Where(cv => cv.TenChucVu == "Quản lý cửa hàng")
+                  .Select(cv => cv.MaChucVu)
+                  .FirstOrDefault() &&
+              nv.MaBoPhan == nhanvien.MaBoPhan)
+          .Select(nv => nv.Email)
+          .FirstOrDefault();
+                if (string.IsNullOrEmpty(managerEmail))
+                {
+                    return Json(new { success = true, message = "User đã được tạo nhưng không tìm thấy Quản lý cửa hàng để gửi email phê duyệt." });
+                }
+                var emailService = new EmailService();
+                string subject = "Phê duyệt User mới";
+                string body = $@"
+        Xin chào Quản lý,<br/><br/>
+        Nhân viên {user.MaNhanVien} (UserID: {user.UserID}) (Ngày cập nhật:{user.NgayCapNhat}) đã được mở khóa.<br/>
+        Vui lòng phê duyệt hoặc từ chối tài khoản tại đường dẫn sau:<br/>
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Approve'>Phê duyệt</a> | 
+        <a href='https://yourapp.com/User/Approve?UserId={user.UserID}&Action=Reject'>Từ chối</a>";
+
+                emailService.SendEmail(managerEmail, subject, body);
+                return Json(new { success = true, message = "User đã được mở khóa  và email phê duyệt đã được gửi đến quản lý." });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi: {ex.Message} xảy ra trong quá trình khóa  User" });
+            }
+        }
+        public string CreateCodePermissions(string tenQuyen)
+        {
+            if (string.IsNullOrWhiteSpace(tenQuyen))
+            {
+                return "Tên quyền không được để trống.";
+            }
+            var words = tenQuyen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var codePermissions = string.Concat(words.Select(w => w[0])).ToUpper();
+            return codePermissions;
+        }
+        [HttpGet]
+        public JsonResult GetPermissions()
+        {
+            var ListPermissions = _sqlConnectionserver.Quyens.Select(q => new
+            {
+                q.MaQuyen,
+                q.TenQuyen
+            }).ToList();
+            return Json(ListPermissions, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult CreatePermissions()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CreatePermissions(string tenQuyen)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(tenQuyen))
+                {
+                    return Json(new { success = false, message = "Tên quyền không được để trống!" });
+                }
+                string maQuyen = CreateCodePermissions(tenQuyen);
+                if (_sqlConnectionserver.Quyens.Any(q => q.MaQuyen == maQuyen))
+                {
+                    return Json(new { success = false, message = "Mã quyền đã tồn tại!" });
+                }
+                var quyen = new Quyen
+                {
+                    MaQuyen = maQuyen,
+                    TenQuyen = tenQuyen
+                };
+                _sqlConnectionserver.Quyens.Add(quyen);
+                _sqlConnectionserver.SaveChanges();
+                return Json(new { success = true, message = "Tạo quyền thành công!" });
+            }catch(Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi:{ex.Message} xảy ra trong quá trình tạo quyền" });
+            }
+
         }
         public ActionResult Approve(int userID, string Action, string OperationType)
         {

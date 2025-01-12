@@ -334,6 +334,7 @@
           <Property Name="MaQuyen" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="MaNVQL" Type="int" />
           <Property Name="TrangThaiDuyetQL" Type="nvarchar" MaxLength="20" />
+          <Property Name="NgayCapNhat" Type="date" />
         </EntityType>
         <Association Name="FK__BacLuong__MaNhan__49C3F6B7">
           <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="1" />
@@ -1506,6 +1507,7 @@
           <NavigationProperty Name="Quyen" Relationship="Self.FK__Users__MaQuyen__1F98B2C1" FromRole="Users" ToRole="Quyen" />
           <Property Name="MaNVQL" Type="Int32" />
           <Property Name="TrangThaiDuyetQL" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="NgayCapNhat" Type="DateTime" Precision="0" />
         </EntityType>
         <Association Name="FK__BacLuong__MaNhan__49C3F6B7">
           <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="1" />
@@ -2596,6 +2598,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="QLCHTLModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="NgayCapNhat" ColumnName="NgayCapNhat" />
                 <ScalarProperty Name="TrangThaiDuyetQL" ColumnName="TrangThaiDuyetQL" />
                 <ScalarProperty Name="MaNVQL" ColumnName="MaNVQL" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
