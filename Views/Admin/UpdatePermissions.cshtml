@@ -1,0 +1,162 @@
+﻿@model IEnumerable<StoreMartket_System_API.Models.Quyen>
+
+@{
+    ViewBag.Title = "UpdatePermissions";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Cập Nhật Quyền</h2>
+<link rel="stylesheet" href="~/Content/UpdatePermissions.css">
+<div class="row">
+    <div class="col-md-12">
+        <!-- Khung tìm kiếm -->
+        <form id="search-permissions-form" class="mb-4">
+            <div class="form-group">
+                <label for="searchMaQuyen" class="mr-2">Tìm Mã Quyền:</label>
+                <input type="text" id="searchMaQuyen" name="searchMaQuyen" class="form-control" placeholder="Nhập mã quyền" />
+            </div>
+            <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
+        </form>
+    </div>
+</div>
+<hr />
+
+<!-- Thông báo -->
+<div id="message" class="mb-4"></div>
+
+<!-- Form cập nhật quyền -->
+<div id="update-permissions-section" class="mb-4" style="display:none;">
+    <h4>Cập Nhật Quyền</h4>
+    <form id="update-permissions-form">
+        <div class="form-group">
+            <label for="updateMaQuyen">Mã Quyền</label>
+            <input type="text" id="updateMaQuyen" name="updateMaQuyen" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+            <label for="updateTenQuyen">Tên Quyền</label>
+            <input type="text" id="updateTenQuyen" name="updateTenQuyen" class="form-control" placeholder="Nhập tên quyền mới" />
+        </div>
+        <button type="submit" class="btn btn-success">Cập Nhật</button>
+    </form>
+</div>
+<!-- Danh sách quyền -->
+<h3>Danh Sách Quyền</h3>
+<table class="table table-bordered table-striped" id="permissions-table">
+    <thead>
+        <tr>
+            <th>Mã Quyền</th>
+            <th>Tên Quyền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var quyen in Model)
+            {
+                <tr>
+                    <td>@quyen.MaQuyen</td>
+                    <td>@quyen.TenQuyen</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2" class="text-center">Không có quyền nào!</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+       $(document).on('submit', '#search-permissions-form', function (e) {
+           e.preventDefault();
+           var maQuyen = $('#searchMaQuyen').val();
+
+           if (!maQuyen) {
+               $('#message').html('<div class="alert alert-warning">Vui lòng nhập mã quyền để tìm kiếm!</div>');
+               return;
+           }
+
+           $.ajax({
+               url: '@Url.Action("SearchCodePermissions", "Admin")',
+               type: 'POST',
+               data: { MaQuyen: maQuyen },
+               success: function (response) {
+                   if (response.success && response.data) {
+                       var quyen = response.data;
+                       $('#updateMaQuyen').val(quyen.maQuyen);
+                       $('#updateTenQuyen').val(quyen.tenQuyen);
+                   } else {
+                       $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                   }
+               },
+               error: function () {
+                   // Hiển thị thông báo lỗi chung nếu có sự cố kết nối
+                   $('#message').html('<div class="alert alert-danger">Đã xảy ra lỗi khi tìm kiếm quyền!</div>');
+               }
+           });
+
+
+
+           // Cập nhật quyền
+           $(document).on('submit', '#update-permissions-form', function (e) {
+               e.preventDefault();
+               var maQuyen = $('#updateMaQuyen').val();
+               var tenQuyen = $('#updateTenQuyen').val();
+               if (!tenQuyen) {
+                   $('#message').html('<div class="alert alert-warning">Tên quyền không được để trống!</div>');
+                   return;
+               }
+
+               $.ajax({
+                   url: '@Url.Action("UpdatePermissions", "Admin")',
+                   type: 'POST',
+                   data: { MaQuyen: maQuyen, TenQuyen: tenQuyen },
+                   success: function (response) {
+                       if (response.success) {
+                           $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                           $('#update-permissions-section').hide();
+                           updatePermissionsTable();
+                       } else {
+                           $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                       }
+                   },
+                   error: function () {
+                       $('#message').html('<div class="alert alert-danger">Đã xảy ra lỗi khi cập nhật quyền!</div>');
+                   }
+               });
+           });
+           function updatePermissionsTable() {
+               $.ajax({
+                   url: '@Url.Action("GetPermissions", "Admin")',
+                   type: 'GET',
+                   success: function (data) {
+                       var tableBody = $('#permissions-table tbody');
+                       tableBody.empty();
+                       if (data && data.length > 0) {
+                           $.each(data, function (index, quyen) {
+                               tableBody.append('<tr><td>' + quyen.MaQuyen + '</td><td>' + quyen.TenQuyen + '</td></tr>');
+                           });
+                       } else {
+                           tableBody.append('<tr><td colspan="2" class="text-center">Không có quyền nào!</td></tr>');
+                       }
+                   },
+                   error: function () {
+                       $('#message').html('<div class="alert alert-danger">Không thể cập nhật danh sách quyền!</div>');
+                   }
+               });
+           }
+       });
+</script>
+

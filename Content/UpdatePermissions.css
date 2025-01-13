@@ -1,0 +1,87 @@
+﻿/* Style cho phần khung tìm kiếm */
+#search-permissions-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+    #search-permissions-form .form-group {
+        width: 100%;
+        margin-bottom: 10px; /* Khoảng cách giữa các phần tử trong form */
+    }
+
+    #search-permissions-form .btn {
+        width: 100%; /* Nút tìm kiếm sẽ rộng bằng khung tìm kiếm */
+        max-width: 150px; /* Đặt chiều rộng tối đa cho nút tìm kiếm */
+        align-self: flex-start; /* Đảm bảo nút tìm kiếm nằm bên trái */
+    }
+
+/* Style cho bảng danh sách quyền */
+#permissions-table {
+    width: 100%;
+    margin-top: 20px;
+
+}
+
+/* Style cho thông báo */
+#message {
+    margin-bottom: 20px;
+}
+
+/* Style cho form cập nhật quyền */
+#update-permissions-section {
+    margin-top: 20px;
+}
+
+/* Đảm bảo form tìm kiếm và bảng danh sách quyền cùng chiều rộng */
+@media (max-width: 767px) {
+    #search-permissions-form {
+        flex-direction: column;
+    }
+
+        #search-permissions-form .form-group {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        #search-permissions-form .btn {
+            margin-top: 10px;
+        }
+}
+h2{
+    text-align:center;
+    color:red;
+}
+h3 {
+    text-align: center;
+    color: red;
+}
+/* Bảng danh sách quyền */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    color: #0026ff;
+    background-color: dodgerblue;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    color: #000000;
+    
+}
+
+th {
+    background-color:dodgerblue; /* Màu xanh cho hàng tiêu đề */
+    color: #fff;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}

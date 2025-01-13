@@ -1112,12 +1112,18 @@ namespace StoreMartket.Controllers
         [HttpGet]
         public JsonResult GetPermissions()
         {
-            var ListPermissions = _sqlConnectionserver.Quyens.Select(q => new
+            try
             {
-                q.MaQuyen,
-                q.TenQuyen
-            }).ToList();
-            return Json(ListPermissions, JsonRequestBehavior.AllowGet);
+                var ListPermissions = _sqlConnectionserver.Quyens.Select(q => new
+                {
+                    q.MaQuyen,
+                    q.TenQuyen
+                }).ToList();
+                return Json(ListPermissions, JsonRequestBehavior.AllowGet);
+            }catch(Exception ex)
+            {
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
         }
         [HttpGet]
         public ActionResult CreatePermissions()
@@ -1151,6 +1157,101 @@ namespace StoreMartket.Controllers
                 return Json(new { success = false, message = $"Có lỗi:{ex.Message} xảy ra trong quá trình tạo quyền" });
             }
 
+        }
+        [HttpPost]
+        public ActionResult SearchCodePermissions(string maQuyen)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(maQuyen))
+                {
+                    return Json(new { success = false, message = "Mã quyền không được để trống." });
+                }
+
+                if (_sqlConnectionserver == null)
+                {
+                    return Json(new { success = false, message = "Kết nối cơ sở dữ liệu không khả dụng." });
+                }
+
+                var quyen = _sqlConnectionserver.Quyens.FirstOrDefault(u => u.MaQuyen == maQuyen);
+
+                if (quyen != null)
+                {
+                    return Json(new { success = true, data = quyen });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy quyền!" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult UpdatePermissions()
+        {
+           
+            return View();
+        }
+        [HttpPost]
+        public  ActionResult UpdatePermissions(string maQuyen, string tenQuyen)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(maQuyen))
+                {
+                    return Json(new { success = false, message = "Mã quyền không được để trống" });
+                }
+                var quyen = _sqlConnectionserver.Quyens.FirstOrDefault(u => u.MaQuyen == maQuyen);
+                if (quyen == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy quyền với mã đã cung cấp" });
+                }
+                if (string.IsNullOrEmpty(tenQuyen))
+                {
+                    quyen.TenQuyen = tenQuyen;
+                    _sqlConnectionserver.SaveChanges();
+                    return Json(new { success = true, message = "Cập nhật quyền thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Tên quyền không được để trống" });
+                }
+            }catch(Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return Json(new { success = false, message = $"Có lỗi:{ex.Message} trong quá trình cập nhật quyền" });
+            }
+            
+
+        }
+        [HttpGet]
+        public ActionResult DeletePermissions()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult DeletePermissions(string maQuyen)
+        {
+            if (string.IsNullOrEmpty(maQuyen))
+            {
+                return Json(new { success = false, message = "Mã quyền không được để trống" });
+            }
+            var quyen = _sqlConnectionserver.Quyens.Find(maQuyen);
+            if(quyen != null)
+            {
+                var maquyen = _sqlConnectionserver.Users.Where(u => u.MaQuyen == maQuyen);
+                if (maquyen.Any())
+                {
+                    _sqlConnectionserver.Users.RemoveRange(maquyen);
+                }
+                _sqlConnectionserver.Quyens.Remove(quyen);
+                _sqlConnectionserver.SaveChanges();
+                return Json(new { success = true, message = "Xóa quyền thành công" });
+            }
+            return Json(new { success = false, message = "Mã quyền không tồn tại" });
         }
         public ActionResult Approve(int userID, string Action, string OperationType)
         {
