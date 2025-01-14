@@ -474,6 +474,7 @@ namespace StoreMartket.Controllers
             ViewBag.Store = new SelectList(stores, "MaCuaHang", "TenCH");
             return View();
         }
+        // Phương thức cập nhật bộ phận 
         [HttpPost]
         public ActionResult UpdateDepartments(string maBoPhan, string tenBoPhan, int? maCuaHang)
         {
@@ -504,6 +505,7 @@ namespace StoreMartket.Controllers
         {
             return View();
         }
+        //Phương thức xóa  bộ phận
         [HttpPost]
         public ActionResult DeleteDepartments(string maBP)
         {
@@ -557,6 +559,7 @@ namespace StoreMartket.Controllers
             return "CV_" + MaCV;
 
         }
+        //Controller tìm chức vụ theo bộ phận
         [HttpGet]
         public JsonResult GetPositionByDepartments(string maBP)
         {
@@ -941,6 +944,8 @@ namespace StoreMartket.Controllers
                 
                 
                 var nhanvien = _sqlConnectionserver.NhanViens.FirstOrDefault(u => u.MaNhanVien == MaNV);
+                userDelete.TrangThai = "Lock";
+                userDelete.TrangThaiDuyetQL = "Chờ duyệt";
                 _sqlConnectionserver.Users.Remove(userDelete);
                 _sqlConnectionserver.SaveChanges();
                 var managerEmail = _sqlConnectionserver.NhanViens

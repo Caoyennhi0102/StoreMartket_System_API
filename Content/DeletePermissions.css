@@ -1,0 +1,112 @@
+﻿/* Căn chỉnh toàn bộ nội dung */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Tiêu đề chính */
+h2 {
+    color: red;
+   
+    text-align:center;
+}
+h4 {
+    color: red;
+    text-align: center;
+}
+
+/* Khung tìm kiếm */
+#search-permissions-form {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    #search-permissions-form label {
+        font-weight: bold;
+        color: #555;
+    }
+
+#searchMaQuyen {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#btnSearch {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+    #btnSearch:hover {
+        background-color: #0056b3;
+        cursor: pointer;
+    }
+
+/* Kết quả tìm kiếm */
+#searchResult {
+    margin-top: 20px;
+}
+
+#resultContent {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Nút xóa quyền */
+#btnDelete {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+    #btnDelete:hover {
+        background-color: #c82333;
+        cursor: pointer;
+    }

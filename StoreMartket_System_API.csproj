@@ -259,6 +259,7 @@
     <Content Include="Content\CreateDepartments.css" />
     <Content Include="Content\CreatePermissions.css" />
     <Content Include="Content\DeleteDepartments.css" />
+    <Content Include="Content\DeletePermissions.css" />
     <Content Include="Content\DeletePosition.css" />
     <Content Include="Content\DeleteStore.css" />
     <Content Include="Content\DeleteUsercss.css" />
@@ -340,6 +341,7 @@
     <Content Include="Views\Admin\UnlockUser.cshtml" />
     <Content Include="Views\Admin\CreatePermissions.cshtml" />
     <Content Include="Views\Admin\UpdatePermissions.cshtml" />
+    <Content Include="Views\Admin\DeletePermissions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

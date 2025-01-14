@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "DeletePermissions";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Xóa Quyền</h2>
+<link rel="stylesheet" href="~/Content/DeletePermissions.css">
+<div class="row">
+    <div class="col-md-12">
+        <!-- Form tìm kiếm -->
+        <form id="search-permissions-form" class="mb-4">
+            <div class="form-group">
+                <label for="searchMaQuyen">Tìm Mã Quyền:</label>
+                <input type="text" id="searchMaQuyen" name="maQuyen" class="form-control" placeholder="Nhập mã quyền" />
+            </div>
+            <button type="button" id="btnSearch" class="btn btn-primary">Tìm Kiếm</button>
+        </form>
+    </div>
+</div>
+<hr />
+<!-- Thông báo -->
+<div id="alertMessage" class="alert d-none"></div>
+<!-- Kết quả tìm kiếm -->
+<div id="searchResult" class="mt-4">
+    <h4>Kết quả tìm kiếm:</h4>
+    <div id="resultContent">
+        <!-- Kết quả sẽ được hiển thị tại đây -->
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        $(document).ready(function () {
+            // Hiển thị thông báo
+            function showAlert(message, type) {
+                const alertDiv = $('#alertMessage');
+                alertDiv.removeClass().addClass(`alert alert-${type}`).text(message).removeClass('d-none');
+            }
+
+            // Xóa thông báo
+            function clearAlert() {
+                $('#alertMessage').addClass('d-none').text('');
+            }
+            // Xử lý tìm kiếm
+            $('#btnSearch').click(function () {
+                var maQuyen = $('#searchMaQuyen').val();
+
+                if (!maQuyen) {
+                    alert("Vui lòng nhập mã quyền.");
+                    return;
+                }
+                $.ajax({
+                    url: '@Url.Action("SearchCodePermissions", "Admin")',
+                    type: 'POST',
+                    data: { maQuyen: maQuyen },
+                    success: function (response) {
+                        if (response.success) {
+                            var quyen = response.data;
+                            $('#resultContent').html(`
+                                <div class="alert alert-success">
+                                    <strong>Mã Quyền:</strong> ${quyen.MaQuyen} <br />
+                                    <strong>Tên Quyền:</strong> ${quyen.TenQuyen || 'Không có'} <br />
+                                    <strong>Mô Tả:</strong> ${quyen.MoTa || 'Không có'} <br />
+                                    <button class="btn btn-danger mt-2" id="btnDelete" data-id="${quyen.MaQuyen}">Xóa Quyền</button>
+                                </div>
+                            `);
+                            clearAlert(); // Xóa thông báo nếu tìm thấy
+                        } else {
+                            showAlert(response.message, "warning");
+                            $('#resultContent').html('');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showAlert("Đã xảy ra lỗi: " + (xhr.responseText || status), "danger");
+                        $('#resultContent').html('');
+                    }
+                });
+            });
+            // Xử lý xóa
+            $(document).on('click', '#btnDelete', function () {
+                var maQuyen = $(this).data('id');
+
+                if (!confirm("Bạn có chắc chắn muốn xóa quyền này?")) {
+                    return;
+                }
+                $.ajax({
+                    url: '@Url.Action("DeletePermissions", "Admin")',
+                    type: 'POST',
+                    data: { maQuyen: maQuyen },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $('#resultContent').html(`<div class="alert alert-success">${response.message}</div>`);
+                        } else {
+                            alert(response.message);
+                            $('#resultContent').html(`<div class="alert alert-warning">${response.message}</div>`);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showAlert("Đã xảy ra lỗi: " + (xhr.responseText || status), "danger");
+                        $('#resultContent').html('');
+
+                    }
+                });
+            });
+
+
+
+            // Xóa thông báo khi người dùng chỉnh sửa khung tìm kiếm
+            $('#searchMaQuyen').on('input', function () {
+                clearAlert();
+            });
+        });
+</script>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
