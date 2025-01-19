@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "RevokePermissions";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<link rel="stylesheet" href="~/Content/RevokePermissions.css">
+<h2 style="text-align: center; color: red;">Thu Quyền User</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Form tìm kiếm mã nhân viên -->
+            <div class="form-group">
+                <label for="MaNV">Mã Nhân Viên</label>
+                <input type="number" class="form-control" id="MaNV" name="MaNV" placeholder="Nhập mã nhân viên" />
+            </div>
+            <button id="btnSearchUser" class="btn btn-primary">Tìm Kiếm</button>
+        </div>
+    </div>
+    <div id="userInfo" class="mt-4" style="display:none;">
+        <h4>Thông tin người dùng</h4>
+        <p><strong>Mã nhân viên:</strong> <span id="userMaNV"></span></p>
+        <p><strong>Vai trò:</strong> <span id="userRoles"></span></p>
+        <p><strong>Trạng thái:</strong> <span id="userTrangThai"></span></p>
+        <h4>Quyền hiện tại</h4>
+        <form id="formRevokePermissions" method="post">
+            <div class="form-group">
+                <label>Chọn quyền thu hồi</label><br />
+                <!-- Sử dụng checkbox để chọn quyền -->
+                <div id="permissionsList"></div>
+            </div>
+            <button type="submit" class="btn btn-danger">Thu Quyền</button>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Khi nhấn tìm kiếm
+        $("#btnSearchUser").click(function () {
+            var maNV = $("#MaNV").val();
+
+            if (maNV) {
+                $.ajax({
+                    url: '@Url.Action("SearchUserByMaNV", "Admin")',
+                    type: 'GET',
+                    data: { MaNV: maNV },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#userInfo").show();
+                            $("#userMaNV").text(response.data.MaNhanVien);
+                            $("#userRoles").text(response.data.Roles);
+                            $("#userTrangThai").text(response.data.TrangThai ? 'Đang hoạt động' : 'Ngừng hoạt động');
+                            $("#userTrangThaiDuyetQL").text(response.data.TrangThaiDuyetQL ? 'Đã duyệt' : 'Chưa duyệt');
+
+                            // Render checkbox list cho các quyền
+                            var permissionsHtml = '';
+                            permissionsList.forEach(function (permission) {
+                                permissionsHtml += '<div><input type="checkbox" name="selectedPermissions" value="' + permission.MaQuyen + '" /> ' + permission.TenQuyen + '</div>';
+                            });
+                            $("#permissionsList").html(permissionsHtml);
+                        } else {
+                            alert(response.message);
+                            $("#userInfo").hide();
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                });
+            } else {
+                alert("Vui lòng nhập mã nhân viên.");
+            }
+        });
+
+        // Khi gửi form thu quyền
+        $("#formRevokePermissions").submit(function (e) {
+            e.preventDefault();  // Ngừng gửi form tự động
+
+            var maNV = $("#MaNV").val();
+            var selectedPermissions = $("input[name='selectedPermissions']:checked").map(function() {
+                return $(this).val();
+            }).get();
+             $.ajax({
+                url: '@Url.Action("RevokePermissions", "Admin")',
+                type: 'POST',
+                data: {
+                    MaNV: maNV,
+                    selectedPermissions: selectedPermissions
+                },
+                 success: function (response) {
+                     if (response.success) {
+                         alert(response.message);
+                     } else {
+                         alert(response.message);
+
+                     }
+                 },
+                error: function () {
+                    alert("Có lỗi xảy ra khi thu quyền.");
+                }
+            });
+        });
+    });
+</script>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+

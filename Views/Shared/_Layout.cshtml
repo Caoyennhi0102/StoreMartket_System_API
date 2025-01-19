@@ -45,7 +45,7 @@
                 <div class="list-group">
 
                     @*  @if (Session["UserName"] != null)
-                        {
+        {
                     *@
                     <!-- Menu Quản lý cửa hàng   -->
                     <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#employeeFunctions" aria-expanded="false" aria-controls="employeeFunctions">
@@ -122,16 +122,28 @@
                         <a href="/Admin/DeletePermissions" class="list-group-item list-group-item-action">
                             <i class="bi bi-trash"></i> Xóa quyền
                         </a>
-                        <a href="/Admin/GrantUserRole" class="list-group-item list-group-item-action">
+                        <a href="/Admin/GrantingPermissions" class="list-group-item list-group-item-action">
                             <i class="bi bi-key-fill"></i> Cấp quyền User
                         </a>
-                        <a href="/Admin/RevokeUserRole" class="list-group-item list-group-item-action">
+                        <a href="/Admin/RevokePermissions" class="list-group-item list-group-item-action">
                             <i class="bi bi-key"></i> Thu quyền User
                         </a>
                     </div>
-
-
-
+                    <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#userFunctions" aria-expanded="false" aria-controls="userFunctions">
+                        <i class="bi bi-people-fill"></i> QUẢN LÝ NHÂN VIÊN
+                    </a>
+                    <a href="/Admin/AddEmployee" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-plus-fill"></i> Thêm nhân viên
+                    </a>
+                    <a href="/Admin/UpdateEmployee" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-badge"></i> Cập nhật thông tin nhân viên
+                    </a>
+                    <a href="/Admin/DeleteEmployee" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-x-fill"></i> Xóa nhân viên
+                    </a>
+                    <a href="/Admin/EmployeeList" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-lines-fill"></i> Danh sách nhân viên
+                    </a>
 
 
                     <!-- Nút Logout -->
@@ -139,10 +151,10 @@
                         <i class="bi bi-box-arrow-right"></i> Đăng xuất
                     </a>
                     @*
-                        }
-                        else
-                        {
-                             <!-- Nút Login -->
+        }
+        else
+        {
+             <!-- Nút Login -->
                     *@
                     <!-- Hiển thị đăng nhập nếu người dùng chưa đăng nhập -->
                     <a href="@Url.Action("Login", "Admin")" class="list-group-item list-group-item-action">

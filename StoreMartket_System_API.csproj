@@ -263,8 +263,10 @@
     <Content Include="Content\DeletePosition.css" />
     <Content Include="Content\DeleteStore.css" />
     <Content Include="Content\DeleteUsercss.css" />
+    <Content Include="Content\GrantingPermissions.css" />
     <Content Include="Content\LockedUser.css" />
     <Content Include="Content\login.css" />
+    <Content Include="Content\RevokePermissions.css" />
     <Content Include="Content\Sidebar.css" />
     <Content Include="Content\UnlockUser.css" />
     <Content Include="Content\UpdateDepartments.css" />
@@ -342,6 +344,8 @@
     <Content Include="Views\Admin\CreatePermissions.cshtml" />
     <Content Include="Views\Admin\UpdatePermissions.cshtml" />
     <Content Include="Views\Admin\DeletePermissions.cshtml" />
+    <Content Include="Views\Admin\GrantingPermissions.cshtml" />
+    <Content Include="Views\Admin\RevokePermissions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

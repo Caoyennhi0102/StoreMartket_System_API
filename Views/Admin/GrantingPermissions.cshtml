@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "GrantingPermissions";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Đường dẫn Layout
+}
+@*
+    @{
+        bool isSessionActive = (bool)ViewBag.IsSessionActive;
+    }
+*@
+<h2>Cấp Quyền User</h2>
+<link rel="stylesheet" href="~/Content/GrantingPermissions.css">
+<div>
+    <div class="search-container">
+        <input type="number" id="txtMaNV" class="form-control" placeholder="Nhập mã nhân viên..." />
+        <button id="btnSearch" class="btn btn-primary">Tìm kiếm</button>
+    </div>
+</div>
+<div id="userInfo" style="display:none;" class="mt-4">
+    <h4>Thông Tin User</h4>
+    <p><strong>Mã User:</strong> <span id="userID"></span></p>
+    <p><strong>Mã Nhân Viên:</strong> <span id="maNhanVien"></span></p>
+    <p><strong>Roles:</strong> <span id="roles"></span></p>
+    <p><strong>Trạng Thái:</strong> <span id="trangThai"></span></p>
+    <h4>Cấp Quyền</h4>
+    <form id="grantPermissionsForm">
+        @foreach (var quyen in ViewBag.DSQuyen)
+        {
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="quyen_@quyen.MaQuyen" name="selectedPermissions" value="@quyen.MaQuyen">
+                <label class="form-check-label" for="quyen_@quyen.MaQuyen">@quyen.TenQuyen</label>
+            </div>
+        }
+        <button type="submit" class="btn btn-success mt-3">Cấp Quyền</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Xử lý khi nhấn nút Tìm Kiếm
+        $('#btnSearch').on('click', function () {
+            var maNV = $('#txtMaNV').val();
+            if (!maNV) {
+                alert("Vui lòng nhập mã nhân viên.");
+                return;
+            }
+
+            // Gửi yêu cầu Ajax tìm kiếm thông tin User
+            $.getJSON('/Admin/SearchUserByMaNV', { MaNV: maNV }, function (response) {
+                if (response.success) {
+                    $('#userInfo').show();
+                    $('#userID').text(response.data.UserID);
+                    $('#maNhanVien').text(response.data.MaNhanVien);
+                    $('#roles').text(response.data.Roles || "Không có");
+                    $('#trangThai').text(response.data.TrangThai ? "Hoạt động" : "Không hoạt động");
+                    $('#trangThaiDuyetQL').text(response.data.TrangThaiDuyetQL ? "Đã duyệt" : "Chưa duyệt");
+                } else {
+                    alert(response.message);
+                    $('#userInfo').hide();
+                }
+            }).fail(function () {
+                alert("Lỗi khi tìm kiếm thông tin. Vui lòng thử lại.");
+            });
+        });
+        // Xử lý khi submit form cấp quyền
+        $('#grantPermissionsForm').on('submit', function (e) {
+            e.preventDefault();
+            var maNV = $('#txtMaNV').val();
+            var selectedPermissions = [];
+            $('input[name="selectedPermissions"]:checked').each(function () {
+                selectedPermissions.push($(this).val());
+            });
+
+            if (selectedPermissions.length === 0) {
+                alert("Vui lòng chọn ít nhất một quyền.");
+                return;
+            }
+            // Gửi yêu cầu Ajax cấp quyền
+            $.post('/Admin/GrantingPermissions', { MaNV: maNV, selectedPermissions: selectedPermissions }, function (response) {
+                if (response.success) {
+                    alert(response.message);
+                } else {
+                    alert(response.message);
+                }
+            }).fail(function () {
+                alert("Lỗi khi cấp quyền. Vui lòng thử lại.");
+            });
+        });
+    });
+</script>
+@*
+    <script>
+            $(document).ready(function () {
+                // Kiểm tra Session
+                var isSessionActive = @isSessionActive.ToString().ToLower();
+
+                // Nếu Session hết hạn, vô hiệu hóa form
+                if (!isSessionActive) {
+                    $("#myForm input, #myForm button").prop("disabled", true);
+                    alert("Phiên làm việc của bạn đã hết hạn. Vui lòng đăng nhập lại.");
+                }
+            });
+    </script>
+*@
+
+
+
+
